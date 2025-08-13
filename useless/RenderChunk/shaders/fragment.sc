@@ -30,6 +30,22 @@ $input v_clipPosition, v_color0, v_dithering, v_fog, v_lightmapUV, v_texcoord0, 
 #include "bgfx_shader.sh"
 #include "overlay.sh"
 
+#if defined(ENABLE_LIGHT_OVERLAY) && \
+    ( defined(OPAQUE_PASS)      || \
+      defined(TRANSPARENT_PASS) || \
+      defined(ALPHA_TEST_PASS) )
+    
+    #define DO_LIGHT_OVERLAY
+#endif
+
+#if defined(ENABLE_CHUNK_BORDERS) && \
+    ( defined(OPAQUE_PASS)      || \
+      defined(TRANSPARENT_PASS) || \
+      defined(ALPHA_TEST_PASS) )
+    
+    #define DO_CHUNK_BORDERS
+#endif
+
 vec4 textureSample(mediump sampler2D _sampler, vec2 _coord) {
     return texture2D(_sampler, _coord);
 }
@@ -162,14 +178,13 @@ void RenderChunkApplyUseless(FragmentInput fragInput, StandardSurfaceInput surfa
         }
     }
 #endif
-#if defined(ENABLE_LIGHT_OVERLAY) && (defined(OPAQUE_PASS) || defined(TRANSPARENT_PASS))
+#if defined(DO_LIGHT_OVERLAY)
     if ( redstone_overlay_type == 0 && length(fragInput.worldPos) < 64.0){
         int light_overlay_type = light_overlay(fragInput.position,
             fragInput.lightmapUV);
         fragOutput.light_overlay_type = light_overlay_type;
     }
 #endif
-
 }
 
 vec3 applyFogVanilla(vec3 diffuse, vec3 fogColor, float fogIntensity) {
@@ -307,7 +322,7 @@ void StandardTemplate_Opaque_Frag(FragmentInput fragInput, inout FragmentOutput 
     compositingOutput.mLitColor = computeLighting_RenderChunk(fragInput, surfaceInput, surfaceOutput, primaryLight);
     fragOutput.Color0 = standardComposite(surfaceOutput, compositingOutput);
 
-#if defined(ENABLE_LIGHT_OVERLAY) && (defined(OPAQUE_PASS) || defined(TRANSPARENT_PASS))
+#if defined(DO_LIGHT_OVERLAY)
     if(fragOutput.light_overlay_type == 1) {
         fragOutput.Color0 = mix(fragOutput.Color0, vec4(0.0, 1.0, 0.0, 1.5), 0.15);
     } else if(fragOutput.light_overlay_type == 2) {
@@ -315,7 +330,7 @@ void StandardTemplate_Opaque_Frag(FragmentInput fragInput, inout FragmentOutput 
     }
 #endif
 
-#if defined(ENABLE_CHUNK_BORDERS) && (defined(OPAQUE_PASS) || defined(TRANSPARENT_PASS))
+#if defined(DO_CHUNK_BORDERS)
     if(length(fragInput.worldPos) < 128.0) {
         fragOutput.Color0 = chunk_border(fragOutput.Color0, fragInput.position);
     }

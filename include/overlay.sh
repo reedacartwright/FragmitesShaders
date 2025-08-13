@@ -317,6 +317,9 @@ int light_overlay(vec3 chunkPos, vec2 light_uv)
     cp.x = cp.x * 3.0 - 1.23;
     cp.z = cp.z * 3.0 - 1.1;
     
+    // Add a constant to adjust for floating-point errors
+    light_uv += vec2(0.015625);
+
     // x
     if (light_uv.x < 0.0625)
     {

@@ -1,11 +1,19 @@
-void red_stone_level(inout bool needDiscard, inout bool isRedstoneDust, inout vec4 diffuse, vec3 cp, vec3 color)
+int redstone_overlay(vec3 chunkPos, vec3 color)
 {
+    int redstone_overlay_value = 0;
+    vec3 normal = normalize(cross(dFdx(chunkPos), dFdy(chunkPos)));
+    if(normal.y <= 0.99) {
+        return redstone_overlay_value;
+    }
+    vec3 cp = fract(chunkPos);
+    cp.x = cp.x * 3.0 - 1.1;
+    cp.z = cp.z * 3.0 - 1.1;
+
     if (color.r > color.g + color.b)
     {
         if (color.r > 0.999 && color.g > 50.0 / 255.0 - 0.005 && color.g < 50.0 / 255.0 + 0.005 &&
             color.b < 0.005)
         {
-            isRedstoneDust = true;
             if ((cp.x <= 0.7 && cp.x >= 0.1 && cp.z <= 0.08 && cp.z >= 0.05) ||
                 (cp.x <= 0.7 && cp.x >= 0.1 && cp.z <= 0.2 && cp.z >= 0.17) ||
                 (mod(floor(15.0 / exp2(floor((4.0 / 0.6) * (cp.x - 0.1)))) * 1.0, 2.0) >= 0.5 && cp.z <= 0.15 &&
@@ -19,15 +27,15 @@ void red_stone_level(inout bool needDiscard, inout bool isRedstoneDust, inout ve
                 (cp.x <= 0.3 && cp.x >= 0.1 && cp.z <= 0.75 && cp.z >= 0.65) ||
                 (cp.x <= 0.4 && cp.x >= 0.2 && cp.z <= 0.35 && cp.z >= 0.25))
             {
-                diffuse = vec4(1.0, 1.0, 1.0, 1.0);
-                needDiscard = false;
+                redstone_overlay_value = 2;
+            } else {
+                redstone_overlay_value = 1;
             }
         }
-
-        if (color.r > 244.0 / 255.0 - 0.005 && color.r < 244.0 / 255.0 + 0.005 &&
+        else if (color.r > 244.0 / 255.0 - 0.005 && color.r < 244.0 / 255.0 + 0.005 &&
             color.g > 27.0 / 255.0 - 0.005 && color.g < 27.0 / 255.0 + 0.005 && color.b < 0.005)
         {
-            isRedstoneDust = true;
+            redstone_overlay_value = 1;
             if ((cp.x <= 0.7 && cp.x >= 0.1 && cp.z <= 0.08 && cp.z >= 0.05) ||
                 (cp.x <= 0.7 && cp.x >= 0.1 && cp.z <= 0.2 && cp.z >= 0.17) ||
                 (mod(floor(14.0 / exp2(floor((4.0 / 0.6) * (cp.x - 0.1)))) * 1.0, 2.0) >= 0.5 && cp.z <= 0.15 &&
@@ -39,15 +47,15 @@ void red_stone_level(inout bool needDiscard, inout bool isRedstoneDust, inout ve
                 (cp.x <= 0.4 && cp.x >= 0.3 && cp.z <= 0.75 && cp.z >= 0.45) ||
                 (cp.x <= 0.3 && cp.x >= 0.2 && cp.z <= 0.55 && cp.z >= 0.45))
             {
-                diffuse = vec4(1.0, 1.0, 1.0, 1.0);
-                needDiscard = false;
+                redstone_overlay_value = 2;
+            } else {
+                redstone_overlay_value = 1;
             }
         }
-
-        if (color.r > 234.0 / 255.0 - 0.005 && color.r < 234.0 / 255.0 + 0.005 &&
+        else if (color.r > 234.0 / 255.0 - 0.005 && color.r < 234.0 / 255.0 + 0.005 &&
             color.g > 6.0 / 255.0 - 0.005 && color.g < 6.0 / 255.0 + 0.005 && color.b < 0.005)
         {
-            isRedstoneDust = true;
+            redstone_overlay_value = 1;
             if ((cp.x <= 0.7 && cp.x >= 0.1 && cp.z <= 0.08 && cp.z >= 0.05) ||
                 (cp.x <= 0.7 && cp.x >= 0.1 && cp.z <= 0.2 && cp.z >= 0.17) ||
                 (mod(floor(13.0 / exp2(floor((4.0 / 0.6) * (cp.x - 0.1)))) * 1.0, 2.0) >= 0.5 && cp.z <= 0.15 &&
@@ -60,16 +68,15 @@ void red_stone_level(inout bool needDiscard, inout bool isRedstoneDust, inout ve
                 (cp.x <= 0.4 && cp.x >= 0.2 && cp.z <= 0.35 && cp.z >= 0.25) ||
                 (cp.x <= 0.4 && cp.x >= 0.2 && cp.z <= 0.75 && cp.z >= 0.65))
             {
-                diffuse = vec4(1.0, 1.0, 1.0, 1.0);
-                needDiscard = false;
+                redstone_overlay_value = 2;
+            } else {
+                redstone_overlay_value = 1;
             }
         }
-
-        if (color.r > 224.0 / 255.0 - 0.005 && color.r < 224.0 / 255.0 + 0.005 &&
+        else if (color.r > 224.0 / 255.0 - 0.005 && color.r < 224.0 / 255.0 + 0.005 &&
             color.g + color.b < 0.005)
         {
-            isRedstoneDust = true;
-            if ((cp.x <= 0.7 && cp.x >= 0.1 && cp.z <= 0.08 && cp.z >= 0.05) ||
+             if ((cp.x <= 0.7 && cp.x >= 0.1 && cp.z <= 0.08 && cp.z >= 0.05) ||
                 (cp.x <= 0.7 && cp.x >= 0.1 && cp.z <= 0.2 && cp.z >= 0.17) ||
                 (mod(floor(12.0 / exp2(floor((4.0 / 0.6) * (cp.x - 0.1)))) * 1.0, 2.0) >= 0.5 && cp.z <= 0.15 &&
                  cp.z >= 0.1) ||
@@ -82,15 +89,14 @@ void red_stone_level(inout bool needDiscard, inout bool isRedstoneDust, inout ve
                 (cp.x <= 0.3 && cp.x >= 0.1 && cp.z <= 0.35 && cp.z >= 0.25) ||
                 (cp.x <= 0.4 && cp.x >= 0.2 && cp.z <= 0.75 && cp.z >= 0.65))
             {
-                diffuse = vec4(1.0, 1.0, 1.0, 1.0);
-                needDiscard = false;
+                redstone_overlay_value = 2;
+            } else {
+                redstone_overlay_value = 1;
             }
         }
-
-        if (color.r > 214.0 / 255.0 - 0.005 && color.r < 214.0 / 255.0 + 0.005 &&
+        else if (color.r > 214.0 / 255.0 - 0.005 && color.r < 214.0 / 255.0 + 0.005 &&
             color.g + color.b < 0.005)
         {
-            isRedstoneDust = true;
             if ((cp.x <= 0.7 && cp.x >= 0.1 && cp.z <= 0.08 && cp.z >= 0.05) ||
                 (cp.x <= 0.7 && cp.x >= 0.1 && cp.z <= 0.2 && cp.z >= 0.17) ||
                 (mod(floor(11.0 / exp2(floor((4.0 / 0.6) * (cp.x - 0.1)))) * 1.0, 2.0) >= 0.5 && cp.z <= 0.15 &&
@@ -102,15 +108,14 @@ void red_stone_level(inout bool needDiscard, inout bool isRedstoneDust, inout ve
                 (cp.x <= 0.3 && cp.x >= 0.2 && cp.z <= 0.75 && cp.z >= 0.35) ||
                 (cp.x <= 0.4 && cp.x >= 0.3 && cp.z <= 0.75 && cp.z >= 0.65))
             {
-                diffuse = vec4(1.0, 1.0, 1.0, 1.0);
-                needDiscard = false;
+                redstone_overlay_value = 2;
+            } else {
+                redstone_overlay_value = 1;
             }
         }
-
-        if (color.r > 204.0 / 255.0 - 0.005 && color.r < 204.0 / 255.0 + 0.005 &&
+        else if (color.r > 204.0 / 255.0 - 0.005 && color.r < 204.0 / 255.0 + 0.005 &&
             color.g + color.b < 0.005)
         {
-            isRedstoneDust = true;
             if ((cp.x <= 0.7 && cp.x >= 0.1 && cp.z <= 0.08 && cp.z >= 0.05) ||
                 (cp.x <= 0.7 && cp.x >= 0.1 && cp.z <= 0.2 && cp.z >= 0.17) ||
                 (mod(floor(10.0 / exp2(floor((4.0 / 0.6) * (cp.x - 0.1)))) * 1.0, 2.0) >= 0.5 && cp.z <= 0.15 &&
@@ -123,14 +128,14 @@ void red_stone_level(inout bool needDiscard, inout bool isRedstoneDust, inout ve
                 (cp.x <= 0.3 && cp.x >= 0.2 && cp.z <= 0.75 && cp.z >= 0.65) ||
                 (cp.x <= 0.3 && cp.x >= 0.2 && cp.z <= 0.35 && cp.z >= 0.25))
             {
-                diffuse = vec4(1.0, 1.0, 1.0, 1.0);
-                needDiscard = false;
+                redstone_overlay_value = 2;
+            } else {
+                redstone_overlay_value = 1;
             }
         }
-        if (color.r > 193.0 / 255.0 - 0.005 && color.r < 193.0 / 255.0 + 0.005 &&
+        else if (color.r > 193.0 / 255.0 - 0.005 && color.r < 193.0 / 255.0 + 0.005 &&
             color.g + color.b < 0.005)
         {
-            isRedstoneDust = true;
             if ((cp.x <= 0.7 && cp.x >= 0.1 && cp.z <= 0.08 && cp.z >= 0.05) ||
                 (cp.x <= 0.7 && cp.x >= 0.1 && cp.z <= 0.2 && cp.z >= 0.17) ||
                 (mod(floor(9.0 / exp2(floor((4.0 / 0.6) * (cp.x - 0.1)))) * 1.0, 2.0) >= 0.5 && cp.z <= 0.15 &&
@@ -141,15 +146,14 @@ void red_stone_level(inout bool needDiscard, inout bool isRedstoneDust, inout ve
                 (cp.x <= 0.4 + 0.15 && cp.x >= 0.1 + 0.15 && cp.z <= 0.35 && cp.z >= 0.25) ||
                 (cp.x <= 0.4 + 0.15 && cp.x >= 0.2 + 0.15 && cp.z <= 0.75 && cp.z >= 0.65))
             {
-                diffuse = vec4(1.0, 1.0, 1.0, 1.0);
-                needDiscard = false;
+                redstone_overlay_value = 2;
+            } else {
+                redstone_overlay_value = 1;
             }
         }
-
-        if (color.r > 183.0 / 255.0 - 0.005 && color.r < 183.0 / 255.0 + 0.005 &&
+        else if (color.r > 183.0 / 255.0 - 0.005 && color.r < 183.0 / 255.0 + 0.005 &&
             color.g + color.b < 0.005)
         {
-            isRedstoneDust = true;
             if ((cp.x <= 0.7 && cp.x >= 0.1 && cp.z <= 0.08 && cp.z >= 0.05) ||
                 (cp.x <= 0.7 && cp.x >= 0.1 && cp.z <= 0.2 && cp.z >= 0.17) ||
                 (mod(floor(8.0 / exp2(floor((4.0 / 0.6) * (cp.x - 0.1)))) * 1.0, 2.0) >= 0.5 && cp.z <= 0.15 &&
@@ -160,15 +164,14 @@ void red_stone_level(inout bool needDiscard, inout bool isRedstoneDust, inout ve
                 (cp.x <= 0.3 + 0.15 && cp.x >= 0.2 + 0.15 && cp.z <= 0.75 && cp.z >= 0.65) ||
                 (cp.x <= 0.3 + 0.15 && cp.x >= 0.2 + 0.15 && cp.z <= 0.35 && cp.z >= 0.25))
             {
-                diffuse = vec4(1.0, 1.0, 1.0, 1.0);
-                needDiscard = false;
+                redstone_overlay_value = 2;
+            } else {
+                redstone_overlay_value = 1;
             }
         }
-
-        if (color.r > 173.0 / 255.0 - 0.005 && color.r < 173.0 / 255.0 + 0.005 &&
+        else if (color.r > 173.0 / 255.0 - 0.005 && color.r < 173.0 / 255.0 + 0.005 &&
             color.g + color.b < 0.005)
         {
-            isRedstoneDust = true;
             if ((cp.x <= 0.7 && cp.x >= 0.1 && cp.z <= 0.08 && cp.z >= 0.05) ||
                 (cp.x <= 0.7 && cp.x >= 0.1 && cp.z <= 0.2 && cp.z >= 0.17) ||
                 (mod(floor(7.0 / exp2(floor((4.0 / 0.6) * (cp.x - 0.1)))) * 1.0, 2.0) >= 0.5 && cp.z <= 0.15 &&
@@ -177,15 +180,14 @@ void red_stone_level(inout bool needDiscard, inout bool isRedstoneDust, inout ve
                 (cp.x <= 0.4 + 0.15 && cp.x >= 0.2 + 0.15 && cp.z <= 0.75 && cp.z >= 0.65) ||
                 (cp.x <= 0.4 + 0.15 && cp.x >= 0.3 + 0.15 && cp.z <= 0.65 && cp.z >= 0.55))
             {
-                diffuse = vec4(1.0, 1.0, 1.0, 1.0);
-                needDiscard = false;
+                redstone_overlay_value = 2;
+            } else {
+                redstone_overlay_value = 1;
             }
         }
-
-        if (color.r > 163.0 / 255.0 - 0.005 && color.r < 163.0 / 255.0 + 0.005 &&
+        else if (color.r > 163.0 / 255.0 - 0.005 && color.r < 163.0 / 255.0 + 0.005 &&
             color.g + color.b < 0.005)
         {
-            isRedstoneDust = true;
             if ((cp.x <= 0.7 && cp.x >= 0.1 && cp.z <= 0.08 && cp.z >= 0.05) ||
                 (cp.x <= 0.7 && cp.x >= 0.1 && cp.z <= 0.2 && cp.z >= 0.17) ||
                 (mod(floor(6.0 / exp2(floor((4.0 / 0.6) * (cp.x - 0.1)))) * 1.0, 2.0) >= 0.5 && cp.z <= 0.15 &&
@@ -196,15 +198,14 @@ void red_stone_level(inout bool needDiscard, inout bool isRedstoneDust, inout ve
                 (cp.x <= 0.3 + 0.15 && cp.x >= 0.1 + 0.15 && cp.z <= 0.75 && cp.z >= 0.65) ||
                 (cp.x <= 0.4 + 0.15 && cp.x >= 0.2 + 0.15 && cp.z <= 0.35 && cp.z >= 0.25))
             {
-                diffuse = vec4(1.0, 1.0, 1.0, 1.0);
-                needDiscard = false;
+                redstone_overlay_value = 2;
+            } else {
+                redstone_overlay_value = 1;
             }
         }
-
-        if (color.r > 153.0 / 255.0 - 0.005 && color.r < 153.0 / 255.0 + 0.005 &&
+        else if (color.r > 153.0 / 255.0 - 0.005 && color.r < 153.0 / 255.0 + 0.005 &&
             color.g + color.b < 0.005)
         {
-            isRedstoneDust = true;
             if ((cp.x <= 0.7 && cp.x >= 0.1 && cp.z <= 0.08 && cp.z >= 0.05) ||
                 (cp.x <= 0.7 && cp.x >= 0.1 && cp.z <= 0.2 && cp.z >= 0.17) ||
                 (mod(floor(5.0 / exp2(floor((4.0 / 0.6) * (cp.x - 0.1)))) * 1.0, 2.0) >= 0.5 && cp.z <= 0.15 &&
@@ -215,15 +216,14 @@ void red_stone_level(inout bool needDiscard, inout bool isRedstoneDust, inout ve
                 (cp.x <= 0.3 + 0.15 && cp.x >= 0.1 + 0.15 && cp.z <= 0.75 && cp.z >= 0.65) ||
                 (cp.x <= 0.4 + 0.15 && cp.x >= 0.2 + 0.15 && cp.z <= 0.35 && cp.z >= 0.25))
             {
-                diffuse = vec4(1.0, 1.0, 1.0, 1.0);
-                needDiscard = false;
+                redstone_overlay_value = 2;
+            } else {
+                redstone_overlay_value = 1;
             }
         }
-
-        if (color.r > 142.0 / 255.0 - 0.005 && color.r < 142.0 / 255.0 + 0.005 &&
+        else if (color.r > 142.0 / 255.0 - 0.005 && color.r < 142.0 / 255.0 + 0.005 &&
             color.g + color.b < 0.005)
         {
-            isRedstoneDust = true;
             if ((cp.x <= 0.7 && cp.x >= 0.1 && cp.z <= 0.08 && cp.z >= 0.05) ||
                 (cp.x <= 0.7 && cp.x >= 0.1 && cp.z <= 0.2 && cp.z >= 0.17) ||
                 (mod(floor(4.0 / exp2(floor((4.0 / 0.6) * (cp.x - 0.1)))) * 1.0, 2.0) >= 0.5 && cp.z <= 0.15 &&
@@ -232,15 +232,14 @@ void red_stone_level(inout bool needDiscard, inout bool isRedstoneDust, inout ve
                 (cp.x <= 0.4 + 0.15 && cp.x >= 0.3 + 0.15 && cp.z <= 0.75 && cp.z >= 0.45) ||
                 (cp.x <= 0.3 + 0.15 && cp.x >= 0.2 + 0.15 && cp.z <= 0.55 && cp.z >= 0.45))
             {
-                diffuse = vec4(1.0, 1.0, 1.0, 1.0);
-                needDiscard = false;
+                redstone_overlay_value = 2;
+            } else {
+                redstone_overlay_value = 1;
             }
         }
-
-        if (color.r > 132.0 / 255.0 - 0.005 && color.r < 132.0 / 255.0 + 0.005 &&
+        else if (color.r > 132.0 / 255.0 - 0.005 && color.r < 132.0 / 255.0 + 0.005 &&
             color.g + color.b < 0.005)
         {
-            isRedstoneDust = true;
             if ((cp.x <= 0.7 && cp.x >= 0.1 && cp.z <= 0.08 && cp.z >= 0.05) ||
                 (cp.x <= 0.7 && cp.x >= 0.1 && cp.z <= 0.2 && cp.z >= 0.17) ||
                 (mod(floor(3.0 / exp2(floor((4.0 / 0.6) * (cp.x - 0.1)))) * 1.0, 2.0) >= 0.5 && cp.z <= 0.15 &&
@@ -250,15 +249,14 @@ void red_stone_level(inout bool needDiscard, inout bool isRedstoneDust, inout ve
                 (cp.x <= 0.4 + 0.15 && cp.x >= 0.2 + 0.15 && cp.z <= 0.35 && cp.z >= 0.25) ||
                 (cp.x <= 0.4 + 0.15 && cp.x >= 0.2 + 0.15 && cp.z <= 0.75 && cp.z >= 0.65))
             {
-                diffuse = vec4(1.0, 1.0, 1.0, 1.0);
-                needDiscard = false;
+                redstone_overlay_value = 2;
+            } else {
+                redstone_overlay_value = 1;
             }
         }
-
-        if (color.r > 122.0 / 255.0 - 0.005 && color.r < 122.0 / 255.0 + 0.005 &&
+        else if (color.r > 122.0 / 255.0 - 0.005 && color.r < 122.0 / 255.0 + 0.005 &&
             color.g + color.b < 0.005)
         {
-            isRedstoneDust = true;
             if ((cp.x <= 0.7 && cp.x >= 0.1 && cp.z <= 0.08 && cp.z >= 0.05) ||
                 (cp.x <= 0.7 && cp.x >= 0.1 && cp.z <= 0.2 && cp.z >= 0.17) ||
                 (mod(floor(2.0 / exp2(floor((4.0 / 0.6) * (cp.x - 0.1)))) * 1.0, 2.0) >= 0.5 && cp.z <= 0.15 &&
@@ -269,15 +267,14 @@ void red_stone_level(inout bool needDiscard, inout bool isRedstoneDust, inout ve
                 (cp.x <= 0.3 + 0.15 && cp.x >= 0.1 + 0.15 && cp.z <= 0.35 && cp.z >= 0.25) ||
                 (cp.x <= 0.4 + 0.15 && cp.x >= 0.2 + 0.15 && cp.z <= 0.75 && cp.z >= 0.65))
             {
-                diffuse = vec4(1.0, 1.0, 1.0, 1.0);
-                needDiscard = false;
+                redstone_overlay_value = 2;
+            } else {
+                redstone_overlay_value = 1;
             }
         }
-
-        if (color.r > 112.0 / 255.0 - 0.005 && color.r < 112.0 / 255.0 + 0.005 &&
+        else if (color.r > 112.0 / 255.0 - 0.005 && color.r < 112.0 / 255.0 + 0.005 &&
             color.g + color.b < 0.005)
         {
-            isRedstoneDust = true;
             if ((cp.x <= 0.7 && cp.x >= 0.1 && cp.z <= 0.08 && cp.z >= 0.05) ||
                 (cp.x <= 0.7 && cp.x >= 0.1 && cp.z <= 0.2 && cp.z >= 0.17) ||
                 (mod(floor(1.0 / exp2(floor((4.0 / 0.6) * (cp.x - 0.1)))) * 1.0, 2.0) >= 0.5 && cp.z <= 0.15 &&
@@ -286,14 +283,13 @@ void red_stone_level(inout bool needDiscard, inout bool isRedstoneDust, inout ve
                 (cp.x <= 0.3 + 0.15 && cp.x >= 0.2 + 0.15 && cp.z <= 0.75 && cp.z >= 0.35) ||
                 (cp.x <= 0.4 + 0.15 && cp.x >= 0.3 + 0.15 && cp.z <= 0.75 && cp.z >= 0.65))
             {
-                diffuse = vec4(1.0, 1.0, 1.0, 1.0);
-                needDiscard = false;
+                redstone_overlay_value = 2;
+            } else {
+                redstone_overlay_value = 1;
             }
         }
-
-        if (color.r > 76.0 / 255.0 - 0.005 && color.r < 76.0 / 255.0 + 0.005 && color.g + color.b < 0.005)
+        else if (color.r > 76.0 / 255.0 - 0.005 && color.r < 76.0 / 255.0 + 0.005 && color.g + color.b < 0.005)
         {
-            isRedstoneDust = true;
             if ((cp.x <= 0.7 && cp.x >= 0.1 && cp.z <= 0.08 && cp.z >= 0.05) ||
                 (cp.x <= 0.7 && cp.x >= 0.1 && cp.z <= 0.2 && cp.z >= 0.17) ||
                 (cp.x <= 0.2 + 0.15 && cp.x >= 0.1 + 0.15 && cp.z <= 0.75 && cp.z >= 0.25) ||
@@ -301,43 +297,47 @@ void red_stone_level(inout bool needDiscard, inout bool isRedstoneDust, inout ve
                 (cp.x <= 0.3 + 0.15 && cp.x >= 0.2 + 0.15 && cp.z <= 0.75 && cp.z >= 0.65) ||
                 (cp.x <= 0.3 + 0.15 && cp.x >= 0.2 + 0.15 && cp.z <= 0.35 && cp.z >= 0.25))
             {
-                diffuse = vec4(1.0, 1.0, 1.0, 1.0);
-                needDiscard = false;
+                redstone_overlay_value = 2;
+            } else {
+                redstone_overlay_value = 1;
             }
         }
     }
+    return redstone_overlay_value;
 }
-void light_overlay(inout bool needDiscard, inout int isLightOverlay, vec3 cp, vec2 light_uv)
-{
 
-    cp.x = cp.x - 0.13;
+int light_overlay(vec3 chunkPos, vec2 light_uv)
+{
+    int light_overlay_value = 0;
+    vec3 normal = normalize(cross(dFdx(chunkPos), dFdy(chunkPos)));
+    if(normal.y <= 0.99) {
+        return light_overlay_value;
+    }
+    vec3 cp = fract(chunkPos);
+    cp.x = cp.x * 3.0 - 1.23;
+    cp.z = cp.z * 3.0 - 1.1;
+    
     // x
-    if (light_uv.x == 0.0)
+    if (light_uv.x < 0.0625)
     {
         if ((cp.x <= 0.2 + 0.15 && cp.x >= 0.1 + 0.15 && cp.z <= 0.75 && cp.z >= 0.25) ||
             (cp.x <= 0.4 + 0.15 && cp.x >= 0.3 + 0.15 && cp.z <= 0.75 && cp.z >= 0.25) ||
             (cp.x <= 0.3 + 0.15 && cp.x >= 0.2 + 0.15 && cp.z <= 0.75 && cp.z >= 0.65) ||
             (cp.x <= 0.3 + 0.15 && cp.x >= 0.2 + 0.15 && cp.z <= 0.35 && cp.z >= 0.25))
         {
-            isLightOverlay = 2;
-#ifdef ALPHA_TEST_PASS
-            needDiscard = false;
-#endif
+            light_overlay_value = 2;
         }
     }
-    else if (light_uv.x > 0.0 && light_uv.x <= 0.125)
+    else if (light_uv.x < 0.125)
     {
         if ((cp.x <= 0.4 + 0.15 && cp.x >= 0.1 + 0.15 && cp.z <= 0.35 && cp.z >= 0.25) ||
             (cp.x <= 0.3 + 0.15 && cp.x >= 0.2 + 0.15 && cp.z <= 0.75 && cp.z >= 0.35) ||
             (cp.x <= 0.4 + 0.15 && cp.x >= 0.3 + 0.15 && cp.z <= 0.75 && cp.z >= 0.65))
         {
-            isLightOverlay = 1;
-#ifdef ALPHA_TEST_PASS
-            needDiscard = false;
-#endif
+            light_overlay_value = 1;
         }
     }
-    else if (light_uv.x > 0.125 && light_uv.x <= 0.1875)
+    else if (light_uv.x < 0.1875)
     {
         if ((cp.x <= 0.3 + 0.15 && cp.x >= 0.2 + 0.15 && cp.z <= 0.55 && cp.z >= 0.45) ||
             (cp.x <= 0.2 + 0.15 && cp.x >= 0.1 + 0.15 && cp.z <= 0.75 && cp.z >= 0.45) ||
@@ -345,38 +345,29 @@ void light_overlay(inout bool needDiscard, inout int isLightOverlay, vec3 cp, ve
             (cp.x <= 0.3 + 0.15 && cp.x >= 0.1 + 0.15 && cp.z <= 0.35 && cp.z >= 0.25) ||
             (cp.x <= 0.4 + 0.15 && cp.x >= 0.2 + 0.15 && cp.z <= 0.75 && cp.z >= 0.65))
         {
-            isLightOverlay = 1;
-#ifdef ALPHA_TEST_PASS
-            needDiscard = false;
-#endif
+            light_overlay_value = 1;
         }
     }
-    else if (light_uv.x > 0.1875 && light_uv.x <= 0.25)
+    else if (light_uv.x < 0.25)
     {
         if ((cp.x <= 0.2 + 0.15 && cp.x >= 0.1 + 0.15 && cp.z <= 0.75 && cp.z >= 0.25) ||
             (cp.x <= 0.4 + 0.15 && cp.x >= 0.2 + 0.15 && cp.z <= 0.55 && cp.z >= 0.45) ||
             (cp.x <= 0.4 + 0.15 && cp.x >= 0.2 + 0.15 && cp.z <= 0.35 && cp.z >= 0.25) ||
             (cp.x <= 0.4 + 0.15 && cp.x >= 0.2 + 0.15 && cp.z <= 0.75 && cp.z >= 0.65))
         {
-            isLightOverlay = 1;
-#ifdef ALPHA_TEST_PASS
-            needDiscard = false;
-#endif
+            light_overlay_value = 1;
         }
     }
-    else if (light_uv.x > 0.25 && light_uv.x <= 0.3125)
+    else if (light_uv.x < 0.3125)
     {
         if ((cp.x <= 0.2 + 0.15 && cp.x >= 0.1 + 0.15 && cp.z <= 0.75 && cp.z >= 0.25) ||
             (cp.x <= 0.4 + 0.15 && cp.x >= 0.3 + 0.15 && cp.z <= 0.75 && cp.z >= 0.45) ||
             (cp.x <= 0.3 + 0.15 && cp.x >= 0.2 + 0.15 && cp.z <= 0.55 && cp.z >= 0.45))
         {
-            isLightOverlay = 1;
-#ifdef ALPHA_TEST_PASS
-            needDiscard = false;
-#endif
+            light_overlay_value = 1;
         }
     }
-    else if (light_uv.x > 0.3125 && light_uv.x <= 0.375)
+    else if (light_uv.x < 0.375)
     {
         if ((cp.x <= 0.3 + 0.15 && cp.x >= 0.2 + 0.15 && cp.z <= 0.55 && cp.z >= 0.45) ||
             (cp.x <= 0.2 + 0.15 && cp.x >= 0.1 + 0.15 && cp.z <= 0.55 && cp.z >= 0.25) ||
@@ -384,13 +375,10 @@ void light_overlay(inout bool needDiscard, inout int isLightOverlay, vec3 cp, ve
             (cp.x <= 0.3 + 0.15 && cp.x >= 0.1 + 0.15 && cp.z <= 0.75 && cp.z >= 0.65) ||
             (cp.x <= 0.4 + 0.15 && cp.x >= 0.2 + 0.15 && cp.z <= 0.35 && cp.z >= 0.25))
         {
-            isLightOverlay = 1;
-#ifdef ALPHA_TEST_PASS
-            needDiscard = false;
-#endif
+            light_overlay_value = 1;
         }
     }
-    else if (light_uv.x > 0.375 && light_uv.x <= 0.4375)
+    else if (light_uv.x < 0.4375)
     {
         if ((cp.x <= 0.3 + 0.15 && cp.x >= 0.2 + 0.15 && cp.z <= 0.55 && cp.z >= 0.45) ||
             (cp.x <= 0.2 + 0.15 && cp.x >= 0.1 + 0.15 && cp.z <= 0.55 && cp.z >= 0.25) ||
@@ -398,25 +386,19 @@ void light_overlay(inout bool needDiscard, inout int isLightOverlay, vec3 cp, ve
             (cp.x <= 0.3 + 0.15 && cp.x >= 0.1 + 0.15 && cp.z <= 0.75 && cp.z >= 0.65) ||
             (cp.x <= 0.4 + 0.15 && cp.x >= 0.2 + 0.15 && cp.z <= 0.35 && cp.z >= 0.25))
         {
-            isLightOverlay = 1;
-#ifdef ALPHA_TEST_PASS
-            needDiscard = false;
-#endif
+            light_overlay_value = 1;
         }
     }
-    else if (light_uv.x > 0.4375 && light_uv.x <= 0.5)
+    else if (light_uv.x < 0.5)
     {
         if ((cp.x <= 0.2 + 0.15 && cp.x >= 0.1 + 0.15 && cp.z <= 0.75 && cp.z >= 0.25) ||
             (cp.x <= 0.4 + 0.15 && cp.x >= 0.2 + 0.15 && cp.z <= 0.75 && cp.z >= 0.65) ||
             (cp.x <= 0.4 + 0.15 && cp.x >= 0.3 + 0.15 && cp.z <= 0.65 && cp.z >= 0.55))
         {
-            isLightOverlay = 1;
-#ifdef ALPHA_TEST_PASS
-            needDiscard = false;
-#endif
+            light_overlay_value = 1;
         }
     }
-    else if (light_uv.x > 0.5 && light_uv.x <= 0.5625)
+    else if (light_uv.x < 0.5625)
     {
         if ((cp.x <= 0.3 + 0.15 && cp.x >= 0.2 + 0.15 && cp.z <= 0.55 && cp.z >= 0.45) ||
             (cp.x <= 0.2 + 0.15 && cp.x >= 0.1 + 0.15 && cp.z <= 0.75 && cp.z >= 0.25) ||
@@ -424,13 +406,10 @@ void light_overlay(inout bool needDiscard, inout int isLightOverlay, vec3 cp, ve
             (cp.x <= 0.3 + 0.15 && cp.x >= 0.2 + 0.15 && cp.z <= 0.75 && cp.z >= 0.65) ||
             (cp.x <= 0.3 + 0.15 && cp.x >= 0.2 + 0.15 && cp.z <= 0.35 && cp.z >= 0.25))
         {
-            isLightOverlay = 1;
-#ifdef ALPHA_TEST_PASS
-            needDiscard = false;
-#endif
+            light_overlay_value = 1;
         }
     }
-    else if (light_uv.x > 0.5625 && light_uv.x <= 0.625)
+    else if (light_uv.x < 0.625)
     {
         if ((cp.x <= 0.3 + 0.15 && cp.x >= 0.2 + 0.15 && cp.z <= 0.55 && cp.z >= 0.45) ||
             (cp.x <= 0.2 + 0.15 && cp.x >= 0.1 + 0.15 && cp.z <= 0.75 && cp.z >= 0.35) ||
@@ -438,13 +417,10 @@ void light_overlay(inout bool needDiscard, inout int isLightOverlay, vec3 cp, ve
             (cp.x <= 0.4 + 0.15 && cp.x >= 0.1 + 0.15 && cp.z <= 0.35 && cp.z >= 0.25) ||
             (cp.x <= 0.4 + 0.15 && cp.x >= 0.2 + 0.15 && cp.z <= 0.75 && cp.z >= 0.65))
         {
-            isLightOverlay = 1;
-#ifdef ALPHA_TEST_PASS
-            needDiscard = false;
-#endif
+            light_overlay_value = 1;
         }
     }
-    else if (light_uv.x > 0.625 && light_uv.x <= 0.6875)
+    else if (light_uv.x < 0.6875)
     {
         if ((cp.x <= 0.7 && cp.x >= 0.4 && cp.z <= 0.35 && cp.z >= 0.25) ||
             (cp.x <= 0.6 && cp.x >= 0.5 && cp.z <= 0.75 && cp.z >= 0.35) ||
@@ -454,13 +430,10 @@ void light_overlay(inout bool needDiscard, inout int isLightOverlay, vec3 cp, ve
             (cp.x <= 0.3 && cp.x >= 0.2 && cp.z <= 0.75 && cp.z >= 0.65) ||
             (cp.x <= 0.3 && cp.x >= 0.2 && cp.z <= 0.35 && cp.z >= 0.25))
         {
-            isLightOverlay = 1;
-#ifdef ALPHA_TEST_PASS
-            needDiscard = false;
-#endif
+            light_overlay_value = 1;
         }
     }
-    else if (light_uv.x > 0.6875 && light_uv.x <= 0.75)
+    else if (light_uv.x < 0.75)
     {
         if ((cp.x <= 0.7 && cp.x >= 0.4 && cp.z <= 0.35 && cp.z >= 0.25) ||
             (cp.x <= 0.6 && cp.x >= 0.5 && cp.z <= 0.75 && cp.z >= 0.35) ||
@@ -469,13 +442,10 @@ void light_overlay(inout bool needDiscard, inout int isLightOverlay, vec3 cp, ve
             (cp.x <= 0.3 && cp.x >= 0.2 && cp.z <= 0.75 && cp.z >= 0.35) ||
             (cp.x <= 0.4 && cp.x >= 0.3 && cp.z <= 0.75 && cp.z >= 0.65))
         {
-            isLightOverlay = 1;
-#ifdef ALPHA_TEST_PASS
-            needDiscard = false;
-#endif
+            light_overlay_value = 1;
         }
     }
-    else if (light_uv.x > 0.75 && light_uv.x <= 0.8125)
+    else if (light_uv.x < 0.8125)
     {
         if ((cp.x <= 0.7 && cp.x >= 0.4 && cp.z <= 0.35 && cp.z >= 0.25) ||
             (cp.x <= 0.6 && cp.x >= 0.5 && cp.z <= 0.75 && cp.z >= 0.35) ||
@@ -486,13 +456,10 @@ void light_overlay(inout bool needDiscard, inout int isLightOverlay, vec3 cp, ve
             (cp.x <= 0.3 && cp.x >= 0.1 && cp.z <= 0.35 && cp.z >= 0.25) ||
             (cp.x <= 0.4 && cp.x >= 0.2 && cp.z <= 0.75 && cp.z >= 0.65))
         {
-            isLightOverlay = 1;
-#ifdef ALPHA_TEST_PASS
-            needDiscard = false;
-#endif
+            light_overlay_value = 1;
         }
     }
-    else if (light_uv.x > 0.8125 && light_uv.x <= 0.875)
+    else if (light_uv.x < 0.875)
     {
         if ((cp.x <= 0.7 && cp.x >= 0.4 && cp.z <= 0.35 && cp.z >= 0.25) ||
             (cp.x <= 0.6 && cp.x >= 0.5 && cp.z <= 0.75 && cp.z >= 0.35) ||
@@ -502,13 +469,10 @@ void light_overlay(inout bool needDiscard, inout int isLightOverlay, vec3 cp, ve
             (cp.x <= 0.4 && cp.x >= 0.2 && cp.z <= 0.35 && cp.z >= 0.25) ||
             (cp.x <= 0.4 && cp.x >= 0.2 && cp.z <= 0.75 && cp.z >= 0.65))
         {
-            isLightOverlay = 1;
-#ifdef ALPHA_TEST_PASS
-            needDiscard = false;
-#endif
+            light_overlay_value = 1;
         }
     }
-    else if (light_uv.x > 0.875 && light_uv.x <= 0.9375)
+    else if (light_uv.x < 0.9375)
     {
         if ((cp.x <= 0.7 && cp.x >= 0.4 && cp.z <= 0.35 && cp.z >= 0.25) ||
             (cp.x <= 0.6 && cp.x >= 0.5 && cp.z <= 0.75 && cp.z >= 0.35) ||
@@ -517,13 +481,10 @@ void light_overlay(inout bool needDiscard, inout int isLightOverlay, vec3 cp, ve
             (cp.x <= 0.4 && cp.x >= 0.3 && cp.z <= 0.75 && cp.z >= 0.45) ||
             (cp.x <= 0.3 && cp.x >= 0.2 && cp.z <= 0.55 && cp.z >= 0.45))
         {
-            isLightOverlay = 1;
-#ifdef ALPHA_TEST_PASS
-            needDiscard = false;
-#endif
+            light_overlay_value = 1;
         }
     }
-    else if (light_uv.x > 0.9375)
+    else
     {
         if ((cp.x <= 0.7 && cp.x >= 0.4 && cp.z <= 0.35 && cp.z >= 0.25) ||
             (cp.x <= 0.6 && cp.x >= 0.5 && cp.z <= 0.75 && cp.z >= 0.35) ||
@@ -534,42 +495,33 @@ void light_overlay(inout bool needDiscard, inout int isLightOverlay, vec3 cp, ve
             (cp.x <= 0.3 && cp.x >= 0.1 && cp.z <= 0.75 && cp.z >= 0.65) ||
             (cp.x <= 0.4 && cp.x >= 0.2 && cp.z <= 0.35 && cp.z >= 0.25))
         {
-            isLightOverlay = 1;
-#ifdef ALPHA_TEST_PASS
-            needDiscard = false;
-#endif
+            light_overlay_value = 1;
         }
     }
 
     cp.x = cp.x * 2.0 + 0.55;
     cp.z = cp.z * 2.0 - 0.25;
     // y
-    if (light_uv.y == 0.0)
+    if (light_uv.y < 0.0625)
     {
         if ((cp.x <= 0.2 + 0.15 && cp.x >= 0.1 + 0.15 && cp.z <= 0.75 && cp.z >= 0.25) ||
             (cp.x <= 0.4 + 0.15 && cp.x >= 0.3 + 0.15 && cp.z <= 0.75 && cp.z >= 0.25) ||
             (cp.x <= 0.3 + 0.15 && cp.x >= 0.2 + 0.15 && cp.z <= 0.75 && cp.z >= 0.65) ||
             (cp.x <= 0.3 + 0.15 && cp.x >= 0.2 + 0.15 && cp.z <= 0.35 && cp.z >= 0.25))
         {
-            isLightOverlay = 2;
-#ifdef ALPHA_TEST_PASS
-            needDiscard = false;
-#endif
+            light_overlay_value = 2;
         }
     }
-    else if (light_uv.y > 0.0 && light_uv.y <= 0.125)
+    else if (light_uv.y < 0.1250)
     {
         if ((cp.x <= 0.4 + 0.15 && cp.x >= 0.1 + 0.15 && cp.z <= 0.35 && cp.z >= 0.25) ||
             (cp.x <= 0.3 + 0.15 && cp.x >= 0.2 + 0.15 && cp.z <= 0.75 && cp.z >= 0.35) ||
             (cp.x <= 0.4 + 0.15 && cp.x >= 0.3 + 0.15 && cp.z <= 0.75 && cp.z >= 0.65))
         {
-            isLightOverlay = 1;
-#ifdef ALPHA_TEST_PASS
-            needDiscard = false;
-#endif
+            light_overlay_value = 2;
         }
     }
-    else if (light_uv.y > 0.125 && light_uv.y <= 0.1875)
+    else if (light_uv.y < 0.1875)
     {
         if ((cp.x <= 0.3 + 0.15 && cp.x >= 0.2 + 0.15 && cp.z <= 0.55 && cp.z >= 0.45) ||
             (cp.x <= 0.2 + 0.15 && cp.x >= 0.1 + 0.15 && cp.z <= 0.75 && cp.z >= 0.45) ||
@@ -577,38 +529,29 @@ void light_overlay(inout bool needDiscard, inout int isLightOverlay, vec3 cp, ve
             (cp.x <= 0.3 + 0.15 && cp.x >= 0.1 + 0.15 && cp.z <= 0.35 && cp.z >= 0.25) ||
             (cp.x <= 0.4 + 0.15 && cp.x >= 0.2 + 0.15 && cp.z <= 0.75 && cp.z >= 0.65))
         {
-            isLightOverlay = 1;
-#ifdef ALPHA_TEST_PASS
-            needDiscard = false;
-#endif
+            light_overlay_value = 2;
         }
     }
-    else if (light_uv.y > 0.1875 && light_uv.y <= 0.25)
+    else if (light_uv.y < 0.25)
     {
         if ((cp.x <= 0.2 + 0.15 && cp.x >= 0.1 + 0.15 && cp.z <= 0.75 && cp.z >= 0.25) ||
             (cp.x <= 0.4 + 0.15 && cp.x >= 0.2 + 0.15 && cp.z <= 0.55 && cp.z >= 0.45) ||
             (cp.x <= 0.4 + 0.15 && cp.x >= 0.2 + 0.15 && cp.z <= 0.35 && cp.z >= 0.25) ||
             (cp.x <= 0.4 + 0.15 && cp.x >= 0.2 + 0.15 && cp.z <= 0.75 && cp.z >= 0.65))
         {
-            isLightOverlay = 1;
-#ifdef ALPHA_TEST_PASS
-            needDiscard = false;
-#endif
+            light_overlay_value = 2;
         }
     }
-    else if (light_uv.y > 0.25 && light_uv.y <= 0.3125)
+    else if (light_uv.y < 0.3125)
     {
         if ((cp.x <= 0.2 + 0.15 && cp.x >= 0.1 + 0.15 && cp.z <= 0.75 && cp.z >= 0.25) ||
             (cp.x <= 0.4 + 0.15 && cp.x >= 0.3 + 0.15 && cp.z <= 0.75 && cp.z >= 0.45) ||
             (cp.x <= 0.3 + 0.15 && cp.x >= 0.2 + 0.15 && cp.z <= 0.55 && cp.z >= 0.45))
         {
-            isLightOverlay = 1;
-#ifdef ALPHA_TEST_PASS
-            needDiscard = false;
-#endif
+            light_overlay_value = 2;
         }
     }
-    else if (light_uv.y > 0.3125 && light_uv.y <= 0.375)
+    else if (light_uv.y < 0.375)
     {
         if ((cp.x <= 0.3 + 0.15 && cp.x >= 0.2 + 0.15 && cp.z <= 0.55 && cp.z >= 0.45) ||
             (cp.x <= 0.2 + 0.15 && cp.x >= 0.1 + 0.15 && cp.z <= 0.55 && cp.z >= 0.25) ||
@@ -616,13 +559,10 @@ void light_overlay(inout bool needDiscard, inout int isLightOverlay, vec3 cp, ve
             (cp.x <= 0.3 + 0.15 && cp.x >= 0.1 + 0.15 && cp.z <= 0.75 && cp.z >= 0.65) ||
             (cp.x <= 0.4 + 0.15 && cp.x >= 0.2 + 0.15 && cp.z <= 0.35 && cp.z >= 0.25))
         {
-            isLightOverlay = 1;
-#ifdef ALPHA_TEST_PASS
-            needDiscard = false;
-#endif
+            light_overlay_value = 2;
         }
     }
-    else if (light_uv.y > 0.375 && light_uv.y <= 0.4375)
+    else if (light_uv.y < 0.4375)
     {
         if ((cp.x <= 0.3 + 0.15 && cp.x >= 0.2 + 0.15 && cp.z <= 0.55 && cp.z >= 0.45) ||
             (cp.x <= 0.2 + 0.15 && cp.x >= 0.1 + 0.15 && cp.z <= 0.55 && cp.z >= 0.25) ||
@@ -630,25 +570,19 @@ void light_overlay(inout bool needDiscard, inout int isLightOverlay, vec3 cp, ve
             (cp.x <= 0.3 + 0.15 && cp.x >= 0.1 + 0.15 && cp.z <= 0.75 && cp.z >= 0.65) ||
             (cp.x <= 0.4 + 0.15 && cp.x >= 0.2 + 0.15 && cp.z <= 0.35 && cp.z >= 0.25))
         {
-            isLightOverlay = 1;
-#ifdef ALPHA_TEST_PASS
-            needDiscard = false;
-#endif
+            light_overlay_value = 2;
         }
     }
-    else if (light_uv.y > 0.4375 && light_uv.y <= 0.5)
+    else if (light_uv.y < 0.5)
     {
         if ((cp.x <= 0.2 + 0.15 && cp.x >= 0.1 + 0.15 && cp.z <= 0.75 && cp.z >= 0.25) ||
             (cp.x <= 0.4 + 0.15 && cp.x >= 0.2 + 0.15 && cp.z <= 0.75 && cp.z >= 0.65) ||
             (cp.x <= 0.4 + 0.15 && cp.x >= 0.3 + 0.15 && cp.z <= 0.65 && cp.z >= 0.55))
         {
-            isLightOverlay = 1;
-#ifdef ALPHA_TEST_PASS
-            needDiscard = false;
-#endif
+            light_overlay_value = 2;
         }
     }
-    else if (light_uv.y > 0.5 && light_uv.y <= 0.5625)
+    else if (light_uv.y < 0.5625)
     {
         if ((cp.x <= 0.3 + 0.15 && cp.x >= 0.2 + 0.15 && cp.z <= 0.55 && cp.z >= 0.45) ||
             (cp.x <= 0.2 + 0.15 && cp.x >= 0.1 + 0.15 && cp.z <= 0.75 && cp.z >= 0.25) ||
@@ -656,13 +590,10 @@ void light_overlay(inout bool needDiscard, inout int isLightOverlay, vec3 cp, ve
             (cp.x <= 0.3 + 0.15 && cp.x >= 0.2 + 0.15 && cp.z <= 0.75 && cp.z >= 0.65) ||
             (cp.x <= 0.3 + 0.15 && cp.x >= 0.2 + 0.15 && cp.z <= 0.35 && cp.z >= 0.25))
         {
-            isLightOverlay = 1;
-#ifdef ALPHA_TEST_PASS
-            needDiscard = false;
-#endif
+            light_overlay_value = 1;
         }
     }
-    else if (light_uv.y > 0.5625 && light_uv.y <= 0.625)
+    else if (light_uv.y < 0.625)
     {
         if ((cp.x <= 0.3 + 0.15 && cp.x >= 0.2 + 0.15 && cp.z <= 0.55 && cp.z >= 0.45) ||
             (cp.x <= 0.2 + 0.15 && cp.x >= 0.1 + 0.15 && cp.z <= 0.75 && cp.z >= 0.35) ||
@@ -670,13 +601,10 @@ void light_overlay(inout bool needDiscard, inout int isLightOverlay, vec3 cp, ve
             (cp.x <= 0.4 + 0.15 && cp.x >= 0.1 + 0.15 && cp.z <= 0.35 && cp.z >= 0.25) ||
             (cp.x <= 0.4 + 0.15 && cp.x >= 0.2 + 0.15 && cp.z <= 0.75 && cp.z >= 0.65))
         {
-            isLightOverlay = 1;
-#ifdef ALPHA_TEST_PASS
-            needDiscard = false;
-#endif
+            light_overlay_value = 1;
         }
     }
-    else if (light_uv.y > 0.625 && light_uv.y <= 0.6875)
+    else if (light_uv.y < 0.6875)
     {
         if ((cp.x <= 0.7 && cp.x >= 0.4 && cp.z <= 0.35 && cp.z >= 0.25) ||
             (cp.x <= 0.6 && cp.x >= 0.5 && cp.z <= 0.75 && cp.z >= 0.35) ||
@@ -686,13 +614,10 @@ void light_overlay(inout bool needDiscard, inout int isLightOverlay, vec3 cp, ve
             (cp.x <= 0.3 && cp.x >= 0.2 && cp.z <= 0.75 && cp.z >= 0.65) ||
             (cp.x <= 0.3 && cp.x >= 0.2 && cp.z <= 0.35 && cp.z >= 0.25))
         {
-            isLightOverlay = 1;
-#ifdef ALPHA_TEST_PASS
-            needDiscard = false;
-#endif
+            light_overlay_value = 1;
         }
     }
-    else if (light_uv.y > 0.6875 && light_uv.y <= 0.75)
+    else if (light_uv.y < 0.75)
     {
         if ((cp.x <= 0.7 && cp.x >= 0.4 && cp.z <= 0.35 && cp.z >= 0.25) ||
             (cp.x <= 0.6 && cp.x >= 0.5 && cp.z <= 0.75 && cp.z >= 0.35) ||
@@ -701,13 +626,10 @@ void light_overlay(inout bool needDiscard, inout int isLightOverlay, vec3 cp, ve
             (cp.x <= 0.3 && cp.x >= 0.2 && cp.z <= 0.75 && cp.z >= 0.35) ||
             (cp.x <= 0.4 && cp.x >= 0.3 && cp.z <= 0.75 && cp.z >= 0.65))
         {
-            isLightOverlay = 1;
-#ifdef ALPHA_TEST_PASS
-            needDiscard = false;
-#endif
+            light_overlay_value = 1;
         }
     }
-    else if (light_uv.y > 0.75 && light_uv.y <= 0.8125)
+    else if (light_uv.y < 0.8125)
     {
         if ((cp.x <= 0.7 && cp.x >= 0.4 && cp.z <= 0.35 && cp.z >= 0.25) ||
             (cp.x <= 0.6 && cp.x >= 0.5 && cp.z <= 0.75 && cp.z >= 0.35) ||
@@ -718,13 +640,10 @@ void light_overlay(inout bool needDiscard, inout int isLightOverlay, vec3 cp, ve
             (cp.x <= 0.3 && cp.x >= 0.1 && cp.z <= 0.35 && cp.z >= 0.25) ||
             (cp.x <= 0.4 && cp.x >= 0.2 && cp.z <= 0.75 && cp.z >= 0.65))
         {
-            isLightOverlay = 1;
-#ifdef ALPHA_TEST_PASS
-            needDiscard = false;
-#endif
+            light_overlay_value = 1;
         }
     }
-    else if (light_uv.y > 0.8125 && light_uv.y <= 0.875)
+    else if (light_uv.y < 0.875)
     {
         if ((cp.x <= 0.7 && cp.x >= 0.4 && cp.z <= 0.35 && cp.z >= 0.25) ||
             (cp.x <= 0.6 && cp.x >= 0.5 && cp.z <= 0.75 && cp.z >= 0.35) ||
@@ -734,13 +653,10 @@ void light_overlay(inout bool needDiscard, inout int isLightOverlay, vec3 cp, ve
             (cp.x <= 0.4 && cp.x >= 0.2 && cp.z <= 0.35 && cp.z >= 0.25) ||
             (cp.x <= 0.4 && cp.x >= 0.2 && cp.z <= 0.75 && cp.z >= 0.65))
         {
-            isLightOverlay = 1;
-#ifdef ALPHA_TEST_PASS
-            needDiscard = false;
-#endif
+            light_overlay_value = 1;
         }
     }
-    else if (light_uv.y > 0.875 && light_uv.y <= 0.9375)
+    else if (light_uv.y < 0.9375)
     {
         if ((cp.x <= 0.7 && cp.x >= 0.4 && cp.z <= 0.35 && cp.z >= 0.25) ||
             (cp.x <= 0.6 && cp.x >= 0.5 && cp.z <= 0.75 && cp.z >= 0.35) ||
@@ -749,13 +665,10 @@ void light_overlay(inout bool needDiscard, inout int isLightOverlay, vec3 cp, ve
             (cp.x <= 0.4 && cp.x >= 0.3 && cp.z <= 0.75 && cp.z >= 0.45) ||
             (cp.x <= 0.3 && cp.x >= 0.2 && cp.z <= 0.55 && cp.z >= 0.45))
         {
-            isLightOverlay = 1;
-#ifdef ALPHA_TEST_PASS
-            needDiscard = false;
-#endif
+            light_overlay_value = 1;
         }
     }
-    else if (light_uv.y > 0.9375)
+    else
     {
         if ((cp.x <= 0.7 && cp.x >= 0.4 && cp.z <= 0.35 && cp.z >= 0.25) ||
             (cp.x <= 0.6 && cp.x >= 0.5 && cp.z <= 0.75 && cp.z >= 0.35) ||
@@ -766,14 +679,13 @@ void light_overlay(inout bool needDiscard, inout int isLightOverlay, vec3 cp, ve
             (cp.x <= 0.3 && cp.x >= 0.1 && cp.z <= 0.75 && cp.z >= 0.65) ||
             (cp.x <= 0.4 && cp.x >= 0.2 && cp.z <= 0.35 && cp.z >= 0.25))
         {
-            isLightOverlay = 1;
-#ifdef ALPHA_TEST_PASS
-            needDiscard = false;
-#endif
+            light_overlay_value = 1;
         }
     }
+    return light_overlay_value;
 }
-void chunk_border(inout vec4 diffuse, vec3 chunkPos)
+
+vec4 chunk_border(vec4 diffuse, vec3 chunkPos)
 {
 #define NO_MSAA
 
@@ -848,4 +760,5 @@ void chunk_border(inout vec4 diffuse, vec3 chunkPos)
     weightq = 1.0 / weightq / weightq;
     diffuse.rgb = diffuse.rgb * lrrr * weightq + (mix(diffuse.rgb, max(chunkPos.z, chunkPos.x) < 0.0625 ? vec3(1.0, 0.2, 0.2) : vec3(0.0, 0.0, 1.0), 0.2) * weightq * l1 + (diffuse.rgb / 0.4) * (vec3(1.0, 1.0, 1.0) - diffuse.rgb) * weightq * l2);
 #endif
+    return diffuse;
 }

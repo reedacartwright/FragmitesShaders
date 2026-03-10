@@ -47,7 +47,7 @@ $input v_texcoord0, v_worldPos, v_worldPosition, v_position
 #define DO_CHUNK_BORDERS
 #endif
 
-        vec4 textureSample(mediump sampler2D _sampler, vec2 _coord) {
+vec4 textureSample(mediump sampler2D _sampler, vec2 _coord) {
   return texture2D(_sampler, _coord);
 }
 vec4 textureSample(mediump sampler3D _sampler, vec3 _coord) {
@@ -78,7 +78,7 @@ uniform vec4 MaterialID;
 uniform vec4 RenderChunkFogAlpha;
 uniform vec4 SubPixelOffset;
 uniform vec4 DitherParams;
-uniform vec4 DitherParams2;
+uniform vec4 DitherParams2[3];
 uniform vec4 ViewPositionAndTime;
 
 vec4 ViewRect;
@@ -236,7 +236,7 @@ bool dissolvePosition(vec4 clipPosition, vec4 worldPosition) {
   vec3 ndc = clipPosition.xyz / clipPosition.w;
   vec2 screenUV = ndc.xy * 0.5 + 0.5;
   vec2 pixelCoords = screenUV * DitherParams.xy;
-  vec2 ditherBlock = floor(pixelCoords / DitherParams2.x) * DitherParams2.x;
+  vec2 ditherBlock = floor(pixelCoords / DitherParams2[2].x) * DitherParams2[2].x;
 
   vec2 block4 = floor(ditherBlock * 0.25);
   vec2 block2 = floor(ditherBlock * 0.5);
@@ -252,7 +252,7 @@ bool dissolvePosition(vec4 clipPosition, vec4 worldPosition) {
   float hash3 = fract(block1.x * 0.5 + block1.y * block1.y * 0.75);
 
   float hash = ((hash1 * 0.25 + hash2) * 0.25 + hash3) * 64.0 + 0.5;
-  float ditherValue = hash / 64.0;
+  float ditherValue = hash * 0.015625;
 
   return fadeValue <= ditherValue;
 }

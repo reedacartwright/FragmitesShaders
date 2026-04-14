@@ -318,10 +318,10 @@ int light_overlay(vec3 chunkPos, vec2 light_uv)
     cp.z = cp.z * 3.0 - 1.1;
     
     // Add a constant to adjust for floating-point errors
-    light_uv += vec2(0.015625);
+    light_uv += vec2(0.006666667);
 
     // x
-    if (light_uv.x < 0.0625)
+    if (light_uv.x < 0.06666667)
     {
         if ((cp.x <= 0.2 + 0.15 && cp.x >= 0.1 + 0.15 && cp.z <= 0.75 && cp.z >= 0.25) ||
             (cp.x <= 0.4 + 0.15 && cp.x >= 0.3 + 0.15 && cp.z <= 0.75 && cp.z >= 0.25) ||
@@ -331,7 +331,7 @@ int light_overlay(vec3 chunkPos, vec2 light_uv)
             light_overlay_value = 2;
         }
     }
-    else if (light_uv.x < 0.125)
+    else if (light_uv.x < 0.13333333)
     {
         if ((cp.x <= 0.4 + 0.15 && cp.x >= 0.1 + 0.15 && cp.z <= 0.35 && cp.z >= 0.25) ||
             (cp.x <= 0.3 + 0.15 && cp.x >= 0.2 + 0.15 && cp.z <= 0.75 && cp.z >= 0.35) ||
@@ -340,7 +340,7 @@ int light_overlay(vec3 chunkPos, vec2 light_uv)
             light_overlay_value = 1;
         }
     }
-    else if (light_uv.x < 0.1875)
+    else if (light_uv.x < 0.20000000)
     {
         if ((cp.x <= 0.3 + 0.15 && cp.x >= 0.2 + 0.15 && cp.z <= 0.55 && cp.z >= 0.45) ||
             (cp.x <= 0.2 + 0.15 && cp.x >= 0.1 + 0.15 && cp.z <= 0.75 && cp.z >= 0.45) ||
@@ -351,7 +351,7 @@ int light_overlay(vec3 chunkPos, vec2 light_uv)
             light_overlay_value = 1;
         }
     }
-    else if (light_uv.x < 0.25)
+    else if (light_uv.x < 0.26666667)
     {
         if ((cp.x <= 0.2 + 0.15 && cp.x >= 0.1 + 0.15 && cp.z <= 0.75 && cp.z >= 0.25) ||
             (cp.x <= 0.4 + 0.15 && cp.x >= 0.2 + 0.15 && cp.z <= 0.55 && cp.z >= 0.45) ||
@@ -361,7 +361,7 @@ int light_overlay(vec3 chunkPos, vec2 light_uv)
             light_overlay_value = 1;
         }
     }
-    else if (light_uv.x < 0.3125)
+    else if (light_uv.x < 0.33333333)
     {
         if ((cp.x <= 0.2 + 0.15 && cp.x >= 0.1 + 0.15 && cp.z <= 0.75 && cp.z >= 0.25) ||
             (cp.x <= 0.4 + 0.15 && cp.x >= 0.3 + 0.15 && cp.z <= 0.75 && cp.z >= 0.45) ||
@@ -370,7 +370,7 @@ int light_overlay(vec3 chunkPos, vec2 light_uv)
             light_overlay_value = 1;
         }
     }
-    else if (light_uv.x < 0.375)
+    else if (light_uv.x < 0.40000000)
     {
         if ((cp.x <= 0.3 + 0.15 && cp.x >= 0.2 + 0.15 && cp.z <= 0.55 && cp.z >= 0.45) ||
             (cp.x <= 0.2 + 0.15 && cp.x >= 0.1 + 0.15 && cp.z <= 0.55 && cp.z >= 0.25) ||
@@ -381,7 +381,7 @@ int light_overlay(vec3 chunkPos, vec2 light_uv)
             light_overlay_value = 1;
         }
     }
-    else if (light_uv.x < 0.4375)
+    else if (light_uv.x < 0.46666667)
     {
         if ((cp.x <= 0.3 + 0.15 && cp.x >= 0.2 + 0.15 && cp.z <= 0.55 && cp.z >= 0.45) ||
             (cp.x <= 0.2 + 0.15 && cp.x >= 0.1 + 0.15 && cp.z <= 0.55 && cp.z >= 0.25) ||
@@ -392,7 +392,7 @@ int light_overlay(vec3 chunkPos, vec2 light_uv)
             light_overlay_value = 1;
         }
     }
-    else if (light_uv.x < 0.5)
+    else if (light_uv.x < 0.53333333)
     {
         if ((cp.x <= 0.2 + 0.15 && cp.x >= 0.1 + 0.15 && cp.z <= 0.75 && cp.z >= 0.25) ||
             (cp.x <= 0.4 + 0.15 && cp.x >= 0.2 + 0.15 && cp.z <= 0.75 && cp.z >= 0.65) ||
@@ -401,7 +401,7 @@ int light_overlay(vec3 chunkPos, vec2 light_uv)
             light_overlay_value = 1;
         }
     }
-    else if (light_uv.x < 0.5625)
+    else if (light_uv.x < 0.60000000)
     {
         if ((cp.x <= 0.3 + 0.15 && cp.x >= 0.2 + 0.15 && cp.z <= 0.55 && cp.z >= 0.45) ||
             (cp.x <= 0.2 + 0.15 && cp.x >= 0.1 + 0.15 && cp.z <= 0.75 && cp.z >= 0.25) ||
@@ -412,7 +412,7 @@ int light_overlay(vec3 chunkPos, vec2 light_uv)
             light_overlay_value = 1;
         }
     }
-    else if (light_uv.x < 0.625)
+    else if (light_uv.x < 0.66666667)
     {
         if ((cp.x <= 0.3 + 0.15 && cp.x >= 0.2 + 0.15 && cp.z <= 0.55 && cp.z >= 0.45) ||
             (cp.x <= 0.2 + 0.15 && cp.x >= 0.1 + 0.15 && cp.z <= 0.75 && cp.z >= 0.35) ||
@@ -423,7 +423,7 @@ int light_overlay(vec3 chunkPos, vec2 light_uv)
             light_overlay_value = 1;
         }
     }
-    else if (light_uv.x < 0.6875)
+    else if (light_uv.x < 0.73333333)
     {
         if ((cp.x <= 0.7 && cp.x >= 0.4 && cp.z <= 0.35 && cp.z >= 0.25) ||
             (cp.x <= 0.6 && cp.x >= 0.5 && cp.z <= 0.75 && cp.z >= 0.35) ||
@@ -436,7 +436,7 @@ int light_overlay(vec3 chunkPos, vec2 light_uv)
             light_overlay_value = 1;
         }
     }
-    else if (light_uv.x < 0.75)
+    else if (light_uv.x < 0.80000000)
     {
         if ((cp.x <= 0.7 && cp.x >= 0.4 && cp.z <= 0.35 && cp.z >= 0.25) ||
             (cp.x <= 0.6 && cp.x >= 0.5 && cp.z <= 0.75 && cp.z >= 0.35) ||
@@ -448,7 +448,7 @@ int light_overlay(vec3 chunkPos, vec2 light_uv)
             light_overlay_value = 1;
         }
     }
-    else if (light_uv.x < 0.8125)
+    else if (light_uv.x < 0.86666667)
     {
         if ((cp.x <= 0.7 && cp.x >= 0.4 && cp.z <= 0.35 && cp.z >= 0.25) ||
             (cp.x <= 0.6 && cp.x >= 0.5 && cp.z <= 0.75 && cp.z >= 0.35) ||
@@ -462,7 +462,7 @@ int light_overlay(vec3 chunkPos, vec2 light_uv)
             light_overlay_value = 1;
         }
     }
-    else if (light_uv.x < 0.875)
+    else if (light_uv.x < 0.93333333)
     {
         if ((cp.x <= 0.7 && cp.x >= 0.4 && cp.z <= 0.35 && cp.z >= 0.25) ||
             (cp.x <= 0.6 && cp.x >= 0.5 && cp.z <= 0.75 && cp.z >= 0.35) ||
@@ -475,7 +475,7 @@ int light_overlay(vec3 chunkPos, vec2 light_uv)
             light_overlay_value = 1;
         }
     }
-    else if (light_uv.x < 0.9375)
+    else if (light_uv.x < 1.00000000)
     {
         if ((cp.x <= 0.7 && cp.x >= 0.4 && cp.z <= 0.35 && cp.z >= 0.25) ||
             (cp.x <= 0.6 && cp.x >= 0.5 && cp.z <= 0.75 && cp.z >= 0.35) ||
@@ -505,7 +505,7 @@ int light_overlay(vec3 chunkPos, vec2 light_uv)
     cp.x = cp.x * 2.0 + 0.55;
     cp.z = cp.z * 2.0 - 0.25;
     // y
-    if (light_uv.y < 0.0625)
+    if (light_uv.y < 0.06666667)
     {
         if ((cp.x <= 0.2 + 0.15 && cp.x >= 0.1 + 0.15 && cp.z <= 0.75 && cp.z >= 0.25) ||
             (cp.x <= 0.4 + 0.15 && cp.x >= 0.3 + 0.15 && cp.z <= 0.75 && cp.z >= 0.25) ||
@@ -515,7 +515,7 @@ int light_overlay(vec3 chunkPos, vec2 light_uv)
             light_overlay_value = 2;
         }
     }
-    else if (light_uv.y < 0.1250)
+    else if (light_uv.y < 0.13333333)
     {
         if ((cp.x <= 0.4 + 0.15 && cp.x >= 0.1 + 0.15 && cp.z <= 0.35 && cp.z >= 0.25) ||
             (cp.x <= 0.3 + 0.15 && cp.x >= 0.2 + 0.15 && cp.z <= 0.75 && cp.z >= 0.35) ||
@@ -524,7 +524,7 @@ int light_overlay(vec3 chunkPos, vec2 light_uv)
             light_overlay_value = 2;
         }
     }
-    else if (light_uv.y < 0.1875)
+    else if (light_uv.y < 0.20000000)
     {
         if ((cp.x <= 0.3 + 0.15 && cp.x >= 0.2 + 0.15 && cp.z <= 0.55 && cp.z >= 0.45) ||
             (cp.x <= 0.2 + 0.15 && cp.x >= 0.1 + 0.15 && cp.z <= 0.75 && cp.z >= 0.45) ||
@@ -535,7 +535,7 @@ int light_overlay(vec3 chunkPos, vec2 light_uv)
             light_overlay_value = 2;
         }
     }
-    else if (light_uv.y < 0.25)
+    else if (light_uv.y < 0.26666667)
     {
         if ((cp.x <= 0.2 + 0.15 && cp.x >= 0.1 + 0.15 && cp.z <= 0.75 && cp.z >= 0.25) ||
             (cp.x <= 0.4 + 0.15 && cp.x >= 0.2 + 0.15 && cp.z <= 0.55 && cp.z >= 0.45) ||
@@ -545,7 +545,7 @@ int light_overlay(vec3 chunkPos, vec2 light_uv)
             light_overlay_value = 2;
         }
     }
-    else if (light_uv.y < 0.3125)
+    else if (light_uv.y < 0.33333333)
     {
         if ((cp.x <= 0.2 + 0.15 && cp.x >= 0.1 + 0.15 && cp.z <= 0.75 && cp.z >= 0.25) ||
             (cp.x <= 0.4 + 0.15 && cp.x >= 0.3 + 0.15 && cp.z <= 0.75 && cp.z >= 0.45) ||
@@ -554,7 +554,7 @@ int light_overlay(vec3 chunkPos, vec2 light_uv)
             light_overlay_value = 2;
         }
     }
-    else if (light_uv.y < 0.375)
+    else if (light_uv.y < 0.40000000)
     {
         if ((cp.x <= 0.3 + 0.15 && cp.x >= 0.2 + 0.15 && cp.z <= 0.55 && cp.z >= 0.45) ||
             (cp.x <= 0.2 + 0.15 && cp.x >= 0.1 + 0.15 && cp.z <= 0.55 && cp.z >= 0.25) ||
@@ -565,7 +565,7 @@ int light_overlay(vec3 chunkPos, vec2 light_uv)
             light_overlay_value = 2;
         }
     }
-    else if (light_uv.y < 0.4375)
+    else if (light_uv.y < 0.46666667)
     {
         if ((cp.x <= 0.3 + 0.15 && cp.x >= 0.2 + 0.15 && cp.z <= 0.55 && cp.z >= 0.45) ||
             (cp.x <= 0.2 + 0.15 && cp.x >= 0.1 + 0.15 && cp.z <= 0.55 && cp.z >= 0.25) ||
@@ -576,7 +576,7 @@ int light_overlay(vec3 chunkPos, vec2 light_uv)
             light_overlay_value = 2;
         }
     }
-    else if (light_uv.y < 0.5)
+    else if (light_uv.y < 0.53333333)
     {
         if ((cp.x <= 0.2 + 0.15 && cp.x >= 0.1 + 0.15 && cp.z <= 0.75 && cp.z >= 0.25) ||
             (cp.x <= 0.4 + 0.15 && cp.x >= 0.2 + 0.15 && cp.z <= 0.75 && cp.z >= 0.65) ||
@@ -585,7 +585,7 @@ int light_overlay(vec3 chunkPos, vec2 light_uv)
             light_overlay_value = 2;
         }
     }
-    else if (light_uv.y < 0.5625)
+    else if (light_uv.y < 0.60000000)
     {
         if ((cp.x <= 0.3 + 0.15 && cp.x >= 0.2 + 0.15 && cp.z <= 0.55 && cp.z >= 0.45) ||
             (cp.x <= 0.2 + 0.15 && cp.x >= 0.1 + 0.15 && cp.z <= 0.75 && cp.z >= 0.25) ||
@@ -596,7 +596,7 @@ int light_overlay(vec3 chunkPos, vec2 light_uv)
             light_overlay_value = 1;
         }
     }
-    else if (light_uv.y < 0.625)
+    else if (light_uv.y < 0.66666667)
     {
         if ((cp.x <= 0.3 + 0.15 && cp.x >= 0.2 + 0.15 && cp.z <= 0.55 && cp.z >= 0.45) ||
             (cp.x <= 0.2 + 0.15 && cp.x >= 0.1 + 0.15 && cp.z <= 0.75 && cp.z >= 0.35) ||
@@ -607,7 +607,7 @@ int light_overlay(vec3 chunkPos, vec2 light_uv)
             light_overlay_value = 1;
         }
     }
-    else if (light_uv.y < 0.6875)
+    else if (light_uv.y < 0.73333333)
     {
         if ((cp.x <= 0.7 && cp.x >= 0.4 && cp.z <= 0.35 && cp.z >= 0.25) ||
             (cp.x <= 0.6 && cp.x >= 0.5 && cp.z <= 0.75 && cp.z >= 0.35) ||
@@ -620,7 +620,7 @@ int light_overlay(vec3 chunkPos, vec2 light_uv)
             light_overlay_value = 1;
         }
     }
-    else if (light_uv.y < 0.75)
+    else if (light_uv.y < 0.80000000)
     {
         if ((cp.x <= 0.7 && cp.x >= 0.4 && cp.z <= 0.35 && cp.z >= 0.25) ||
             (cp.x <= 0.6 && cp.x >= 0.5 && cp.z <= 0.75 && cp.z >= 0.35) ||
@@ -632,7 +632,7 @@ int light_overlay(vec3 chunkPos, vec2 light_uv)
             light_overlay_value = 1;
         }
     }
-    else if (light_uv.y < 0.8125)
+    else if (light_uv.y < 0.86666667)
     {
         if ((cp.x <= 0.7 && cp.x >= 0.4 && cp.z <= 0.35 && cp.z >= 0.25) ||
             (cp.x <= 0.6 && cp.x >= 0.5 && cp.z <= 0.75 && cp.z >= 0.35) ||
@@ -646,7 +646,7 @@ int light_overlay(vec3 chunkPos, vec2 light_uv)
             light_overlay_value = 1;
         }
     }
-    else if (light_uv.y < 0.875)
+    else if (light_uv.y < 0.93333333)
     {
         if ((cp.x <= 0.7 && cp.x >= 0.4 && cp.z <= 0.35 && cp.z >= 0.25) ||
             (cp.x <= 0.6 && cp.x >= 0.5 && cp.z <= 0.75 && cp.z >= 0.35) ||
@@ -659,7 +659,7 @@ int light_overlay(vec3 chunkPos, vec2 light_uv)
             light_overlay_value = 1;
         }
     }
-    else if (light_uv.y < 0.9375)
+    else if (light_uv.y < 1.00000000)
     {
         if ((cp.x <= 0.7 && cp.x >= 0.4 && cp.z <= 0.35 && cp.z >= 0.25) ||
             (cp.x <= 0.6 && cp.x >= 0.5 && cp.z <= 0.75 && cp.z >= 0.35) ||

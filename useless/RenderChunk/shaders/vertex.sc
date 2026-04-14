@@ -37,7 +37,7 @@ $output v_lightmapUV, v_texcoord0, v_worldPos, v_worldPosition, v_position
 
 #include "bgfx_shader.sh"
 
-        uniform vec4 MeshContext;
+uniform vec4 MeshContext;
 uniform vec4 FogAndDistanceControl;
 uniform vec4 FogColor;
 uniform vec4 GlobalRoughness;
@@ -187,6 +187,7 @@ void computeLighting_RenderChunk_Vertex(VertexInput vInput,
                                         inout VertexOutput vOutput,
                                         vec3 worldPosition) {
   uvec2 light = uvec2(vInput.lightmapUV.y >> 4u, vInput.lightmapUV.y);
+  // divide by 15
   vOutput.lightmapUV =
       vec2(light & uvec2(15u)) * vec2(0.066666670143604278564453125);
 

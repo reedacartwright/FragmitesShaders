@@ -226,13 +226,26 @@ void StandardTemplate_Opaque_Vert(VertexInput vertInput,
                                   inout VertexOutput vertOutput) {
   StandardTemplate_VertShared(vertInput, vertOutput);
 }
+
+float decodePackedComponent(uint bits) {
+    float magnitude = float(bits & 32767u) * (2.0 / 65535.0);
+    float sign = ((bits & 32768u) != 0u) ? 1.0 : -1.0;
+    return magnitude + sign / 32768.0;
+}
+
 void main() {
   VertexInput vertexInput;
   VertexOutput vertexOutput;
   vertexInput.color0 = a_color0;
   vertexInput.lightmapUV = uvec2(round(a_texcoord1 * 65535.0));
   vertexInput.position = a_position;
-  vertexInput.texcoord0 = a_texcoord0;
+
+  uvec2 var_packed = uvec2(round(a_texcoord0 * 65535.0));
+  vertexInput.texcoord0 = vec2(
+    decodePackedComponent(var_packed.x),
+    decodePackedComponent(var_packed.y)
+  );
+
 #ifdef INSTANCING__ON
   vertexInput.instanceData0 = i_data1;
   vertexInput.instanceData1 = i_data2;

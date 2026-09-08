@@ -1,441 +1,158 @@
-/*
- * Available Macros:
- *
- * Passes:
- * - ALPHA_TEST_PASS
- * - DEPTH_ONLY_PASS
- * - DEPTH_ONLY_OPAQUE_PASS
- * - OPAQUE_PASS
- * - TRANSPARENT_PASS
- *
- * Dithering:
- * - DITHERING__OFF
- * - DITHERING__ON
- *
- * Instancing:
- * - INSTANCING__OFF (not used)
- * - INSTANCING__ON (not used)
- *
- * RenderAsBillboards:
- * - RENDER_AS_BILLBOARDS__OFF (not used)
- * - RENDER_AS_BILLBOARDS__ON (not used)
- *
- * Seasons:
- * - SEASONS__OFF
- * - SEASONS__ON
- */
-
 // clang-format off
 $input v_clipPosition, v_color0, v_ditheringAndMaskTinting, v_fog, v_lightmapUV
-$input v_texcoord0, v_worldPos, v_worldPosition, v_position
+$input v_texcoord0, v_worldPos, v_worldPosition, v_origPosition
 // clang-format on
 
 #include "bgfx_shader.sh"
 #include "overlay.sh"
 
-#if defined(ENABLE_LIGHT_OVERLAY) &&                                           \
-    (defined(OPAQUE_PASS) || defined(TRANSPARENT_PASS) ||                      \
-     defined(ALPHA_TEST_PASS))
-
-#define DO_LIGHT_OVERLAY
+#if defined(DEPTH_ONLY_PASS) || defined(DEPTH_ONLY_OPAQUE_PASS)
+  #undef ENABLE_LIGHT_OVERLAY
+  #undef ENABLE_CHUNK_BORDERS
 #endif
 
-#if defined(ENABLE_CHUNK_BORDERS) &&                                           \
-    (defined(OPAQUE_PASS) || defined(TRANSPARENT_PASS) ||                      \
-     defined(ALPHA_TEST_PASS))
-
-#define DO_CHUNK_BORDERS
+#if !defined(ALPHA_TEST_PASS)
+  #undef ENABLE_REDSTONE_OVERLAY
 #endif
-
-vec4 textureSample(mediump sampler2D _sampler, vec2 _coord) {
-  return texture2D(_sampler, _coord);
-}
-vec4 textureSample(mediump sampler3D _sampler, vec3 _coord) {
-  return texture3D(_sampler, _coord);
-}
-vec4 textureSample(mediump samplerCube _sampler, vec3 _coord) {
-  return textureCube(_sampler, _coord);
-}
-vec4 textureSample(mediump sampler2D _sampler, vec2 _coord, float _lod) {
-  return texture2DLod(_sampler, _coord, _lod);
-}
-vec4 textureSample(mediump sampler3D _sampler, vec3 _coord, float _lod) {
-  return texture3DLod(_sampler, _coord, _lod);
-}
-vec4 textureSample(mediump sampler2DArray _sampler, vec3 _coord) {
-  return texture2DArray(_sampler, _coord);
-}
-vec4 textureSample(mediump sampler2DArray _sampler, vec3 _coord, float _lod) {
-  return texture2DArrayLod(_sampler, _coord, _lod);
-}
-
-uniform vec4 FogAndDistanceControl;
-uniform vec4 FogColor;
-uniform vec4 GlobalRoughness;
-uniform vec4 LightDiffuseColorAndIlluminance;
-uniform vec4 LightWorldSpaceDirection;
-uniform vec4 MaterialID;
-uniform vec4 RenderChunkFogAlpha;
-uniform vec4 SubPixelOffset;
-uniform vec4 DitherParams;
-uniform vec4 DitherParams2[3];
-uniform vec4 ViewPositionAndTime;
-
-vec4 ViewRect;
-mat4 Proj;
-mat4 View;
-vec4 ViewTexel;
-mat4 InvView;
-mat4 InvProj;
-mat4 ViewProj;
-mat4 InvViewProj;
-mat4 PrevViewProj;
-mat4 WorldArray[4];
-mat4 World;
-mat4 WorldView;
-mat4 WorldViewProj;
-vec4 PrevWorldPosOffset;
-vec4 AlphaRef4;
-float AlphaRef;
-
-struct FragmentInput {
-  vec4 clipPosition;
-  vec4 color0;
-  vec2 ditheringAndMaskTinting;
-  vec4 fog;
-  vec2 lightmapUV;
-  vec2 texcoord0;
-  vec3 worldPos;
-  vec4 worldPosition;
-  vec3 position;
-};
-
-struct FragmentOutput {
-  vec4 Color0;
-  int light_overlay_type;
-};
 
 SAMPLER2D_AUTOREG(s_LightMapTexture);
 SAMPLER2D_AUTOREG(s_MatTexture);
 SAMPLER2D_AUTOREG(s_SeasonsTexture);
-struct StandardSurfaceInput {
-  vec2 UV;
-  vec3 Color;
-  float Alpha;
-  vec2 lightmapUV;
-  vec4 fog;
-  vec2 texcoord0;
-  vec2 ditheringAndMaskTinting;
-  vec4 clipPosition;
-  vec4 worldPosition;
-};
 
-StandardSurfaceInput StandardTemplate_DefaultInput(FragmentInput fragInput) {
-  StandardSurfaceInput result;
-  result.UV = vec2(0, 0);
-  result.Color = vec3(1, 1, 1);
-  result.Alpha = 1.0;
-  result.lightmapUV = fragInput.lightmapUV;
-  result.fog = fragInput.fog;
-  result.texcoord0 = fragInput.texcoord0;
-  result.ditheringAndMaskTinting = fragInput.ditheringAndMaskTinting;
-  result.clipPosition = fragInput.clipPosition;
-  result.worldPosition = fragInput.worldPosition;
-  return result;
-}
-struct StandardSurfaceOutput {
-  vec3 Albedo;
-  float Alpha;
-  float Metallic;
-  float Occlusion;
-  float Emissive;
-  float Subsurface;
-  vec3 AmbientLight;
-  vec3 ViewSpaceNormal;
-};
+uniform vec4 DitherParams;
+uniform vec4 DitherParams2[3];
+uniform vec4 ViewPositionAndTime;
+uniform vec4 FogColor;
 
-StandardSurfaceOutput StandardTemplate_DefaultOutput() {
-  StandardSurfaceOutput result;
-  result.Albedo = vec3(1, 1, 1);
-  result.Alpha = 1.0;
-  result.Metallic = 0.0;
-  result.Occlusion = 0.0;
-  result.Emissive = 0.0;
-  result.Subsurface = 0.0;
-  result.AmbientLight = vec3(0.0, 0.0, 0.0);
-  result.ViewSpaceNormal = vec3(0, 1, 0);
-  return result;
-}
-void RenderChunkApplyUseless(FragmentInput fragInput,
-                             StandardSurfaceInput surfaceInput,
-                             inout StandardSurfaceOutput surfaceOutput,
-                             inout FragmentOutput fragOutput) {
-  int redstone_overlay_type = 0;
-#if defined(ENABLE_REDSTONE_OVERLAY) && defined(ALPHA_TEST_PASS)
-  if (length(fragInput.worldPos) < 64.0) {
-    redstone_overlay_type =
-        redstone_overlay(fragInput.position, surfaceInput.Color);
-    if (redstone_overlay_type == 2) {
-      surfaceOutput.Albedo = vec3(1.0, 1.0, 1.0);
-      surfaceOutput.Alpha = 1.0;
-    }
-  }
-#endif
-#if defined(DO_LIGHT_OVERLAY)
-  if (redstone_overlay_type == 0 && length(fragInput.worldPos) < 64.0) {
-    int light_overlay_type =
-        light_overlay(fragInput.position, fragInput.lightmapUV);
-    fragOutput.light_overlay_type = light_overlay_type;
-  }
-#endif
-}
+bool shouldDither(vec2 ditheringAndMaskTinting, vec4 clipPosition, vec4 worldPosition) {
+#if defined(DITHERING__ON) && (defined(ALPHA_TEST_PASS) || defined(TRANSPARENT_PASS))
+  if (ditheringAndMaskTinting.x > 0.5) {
+    vec3 ndc = clipPosition.xyz / clipPosition.w;
+    vec2 screenUV = ndc.xy * 0.5 + 0.5;
+    vec2 ditherRange = DitherParams2[2].xy;
+    float ditherBlockSize = DitherParams2[2].z;
 
-vec3 applyFogVanilla(vec3 diffuse, vec3 fogColor, float fogIntensity) {
-  return mix(diffuse, fogColor, fogIntensity);
-}
-vec4 applySeasons(vec3 vertexColor, float vertexAlpha, vec4 diffuse) {
-  vec2 uv = vertexColor.xy;
-  diffuse.rgb *=
-      mix(vec3(1.0, 1.0, 1.0), textureSample(s_SeasonsTexture, uv).rgb * 2.0,
-          vertexColor.b);
-  diffuse.rgb *= vec3_splat(vertexAlpha);
-  diffuse.a = 1.0;
-  return diffuse;
-}
-void RenderChunkApplyFog(FragmentInput fragInput,
-                         StandardSurfaceInput surfaceInput,
-                         StandardSurfaceOutput surfaceOutput,
-                         inout FragmentOutput fragOutput) {
-  fragOutput.Color0.rgb =
-      applyFogVanilla(fragOutput.Color0.rgb, FogColor.rgb, surfaceInput.fog.a);
-}
-struct CompositingOutput {
-  vec3 mLitColor;
-};
+    vec2 pixelCoords = screenUV * DitherParams.xy;
+    vec2 ditherBlock = floor(pixelCoords / ditherBlockSize) * ditherBlockSize;
 
-vec4 standardComposite(StandardSurfaceOutput stdOutput,
-                       CompositingOutput compositingOutput) {
-  return vec4(compositingOutput.mLitColor, stdOutput.Alpha);
-}
-void StandardTemplate_CustomSurfaceShaderEntryIdentity(
-    vec2 uv, vec3 worldPosition, inout StandardSurfaceOutput surfaceOutput) {}
-struct DirectionalLight {
-  vec3 ViewSpaceDirection;
-  vec3 Intensity;
-};
+    vec2 block4 = floor(ditherBlock * 0.25);
+    vec2 block2 = floor(ditherBlock * 0.5);
+    vec2 block1 = floor(ditherBlock);
 
-vec3 computeLighting_RenderChunk(FragmentInput fragInput,
-                                 StandardSurfaceInput stdInput,
-                                 StandardSurfaceOutput stdOutput,
-                                 DirectionalLight primaryLight) {
-  return textureSample(s_LightMapTexture, stdInput.lightmapUV).rgb *
-         stdOutput.Albedo;
-}
+    vec3 forward = -normalize(vec3(u_view[0].z, u_view[1].z, u_view[2].z));
+    vec3 fragment = worldPosition.xyz - ViewPositionAndTime.xyz;
+    float viewDot = dot(forward, fragment);
 
-bool dissolvePosition(vec4 clipPosition, vec4 worldPosition) {
-  vec3 ndc = clipPosition.xyz / clipPosition.w;
-  vec2 screenUV = ndc.xy * 0.5 + 0.5;
-  vec2 pixelCoords = screenUV * DitherParams.xy;
-  vec2 ditherBlock = floor(pixelCoords / DitherParams2[2].x) * DitherParams2[2].x;
+    float fadeValue = smoothstep(ditherRange.x, ditherRange.y, viewDot);
 
-  vec2 block4 = floor(ditherBlock * 0.25);
-  vec2 block2 = floor(ditherBlock * 0.5);
-  vec2 block1 = floor(ditherBlock);
+    float hash1 = fract(block4.x * 0.5 + block4.y * block4.y * 0.75);
+    float hash2 = fract(block2.x * 0.5 + block2.y * block2.y * 0.75);
+    float hash3 = fract(block1.x * 0.5 + block1.y * block1.y * 0.75);
 
-  vec3 forward = -normalize(vec3(u_view[0].z, u_view[1].z, u_view[2].z));
-  vec3 fragment = worldPosition.xyz - ViewPositionAndTime.xyz;
-  float viewDot = dot(forward, fragment);
-  float fadeValue = smoothstep(DitherParams.z, DitherParams.w, viewDot);
+    float hash = ((hash1 * 0.25 + hash2) * 0.25 + hash3) * 64.0 + 0.5;
+    float ditherValue = hash * 0.015625;
 
-  float hash1 = fract(block4.x * 0.5 + block4.y * block4.y * 0.75);
-  float hash2 = fract(block2.x * 0.5 + block2.y * block2.y * 0.75);
-  float hash3 = fract(block1.x * 0.5 + block1.y * block1.y * 0.75);
-
-  float hash = ((hash1 * 0.25 + hash2) * 0.25 + hash3) * 64.0 + 0.5;
-  float ditherValue = hash * 0.015625;
-
-  return fadeValue <= ditherValue;
-}
-
-void RenderChunkSurfAlpha(in StandardSurfaceInput surfaceInput,
-                          inout StandardSurfaceOutput surfaceOutput) {
-  vec4 diffuse = textureSample(s_MatTexture, surfaceInput.UV);
-
-  bool dissolve = false;
-
-#if defined(DITHERING__ON)
-  if (surfaceInput.ditheringAndMaskTinting.x > 0.5) {
-    dissolve =
-        dissolvePosition(surfaceInput.clipPosition, surfaceInput.worldPosition);
+    return fadeValue <= ditherValue;
   }
 #endif
 
-  const float ALPHA_THRESHOLD = 0.5;
-  if (dissolve || diffuse.a < ALPHA_THRESHOLD) {
-    discard;
-  }
-#ifdef SEASONS__ON
-  diffuse = applySeasons(surfaceInput.Color, surfaceInput.Alpha, diffuse);
-#else
-  diffuse.rgb *= surfaceInput.Color.rgb;
-#endif
-
-  surfaceOutput.Albedo = diffuse.rgb;
-  surfaceOutput.Alpha = diffuse.a;
+  return false;
 }
 
-void RenderChunkSurfDepthOnly(in StandardSurfaceInput surfaceInput,
-                              inout StandardSurfaceOutput surfaceOutput) {
-  vec4 diffuse = textureSample(s_MatTexture, surfaceInput.UV);
-  const float ALPHA_THRESHOLD = 0.5;
-  if (diffuse.a < ALPHA_THRESHOLD) {
-    discard;
-  }
-  surfaceOutput.Albedo = vec3(1.0);
-  surfaceOutput.Alpha = 1.0;
+vec4 applyLightingAndFog(vec4 color, vec2 lightmapUV, float fogIntensity) {
+  vec3 litColor = texture2D(s_LightMapTexture, lightmapUV).xyz * color.xyz;
+  return vec4(mix(litColor, FogColor.xyz, vec3_splat(fogIntensity)), color.a);
 }
 
-void RenderChunkSurfTransparent(in StandardSurfaceInput surfaceInput,
-                                inout StandardSurfaceOutput surfaceOutput) {
-  vec4 diffuse = textureSample(s_MatTexture, surfaceInput.UV);
-
-  if (surfaceInput.ditheringAndMaskTinting.y > 0.5) {
-    vec3 temp = diffuse.rgb * surfaceInput.Color.rgb;
-    diffuse.rgb = mix(diffuse.rgb, temp, vec3(diffuse.a)) * surfaceInput.Alpha;
-    diffuse.a = 1.0;
-  } else {
-    diffuse.rgb *= surfaceInput.Color.rgb;
-    diffuse.a *= surfaceInput.Alpha;
-  }
-#if defined(DITHERING__ON)
-  if (surfaceInput.ditheringAndMaskTinting.x > 0.5) {
-    if (dissolvePosition(surfaceInput.clipPosition,
-                         surfaceInput.worldPosition)) {
-      diffuse.a = 0.0;
-    }
-  }
-#endif
-
-  surfaceOutput.Albedo = diffuse.rgb;
-  surfaceOutput.Alpha = diffuse.a;
+vec4 applySeasons(vec4 materialColor, vec4 vertexColor) {
+  vec3 seasonColor = texture2D(s_SeasonsTexture, vertexColor.xy).xyz * 2.0;
+  vec3 tint = mix(vec3_splat(1.0), seasonColor, vec3_splat(vertexColor.z));
+  return vec4(materialColor.xyz * tint * vertexColor.a, 1.0);
 }
 
-void RenderChunkSurfOpaque(in StandardSurfaceInput surfaceInput,
-                           inout StandardSurfaceOutput surfaceOutput) {
-  vec4 diffuse = textureSample(s_MatTexture, surfaceInput.UV);
-
-#ifdef SEASONS__ON
-  diffuse = applySeasons(surfaceInput.Color, surfaceInput.Alpha, diffuse);
-#else
-  if (surfaceInput.ditheringAndMaskTinting.y > 0.5) {
-    vec3 temp = diffuse.rgb * surfaceInput.Color.rgb;
-    diffuse.rgb = mix(diffuse.rgb, temp, vec3(diffuse.a)) * surfaceInput.Alpha;
-    diffuse.a = 1.0;
-  } else {
-    diffuse.rgb *= surfaceInput.Color.rgb;
-    diffuse.a *= surfaceInput.Alpha;
-  }
-#endif
-
-  surfaceOutput.Albedo = diffuse.rgb;
-  surfaceOutput.Alpha = diffuse.a;
+vec4 applyMaskTinting(vec4 materialColor, vec4 vertexColor) {
+  vec3 tinted = materialColor.xyz * vertexColor.xyz;
+  vec3 color = mix(materialColor.xyz, tinted, vec3_splat(materialColor.a)) * vertexColor.a;
+  return vec4(color, 1.0);
 }
 
-void RenderChunkSurfDepthOnlyOpaque(in StandardSurfaceInput surfaceInput,
-                                    inout StandardSurfaceOutput surfaceOutput) {
-  surfaceOutput.Albedo = vec3(1.0);
-  surfaceOutput.Alpha = 1.0;
-}
+vec4 shadeMaterial(vec4 materialColor, vec4 vertexColor, vec2 ditheringAndMaskTinting) {
+  vec4 color = vec4(materialColor.xyz * vertexColor.xyz, materialColor.a);
 
-void StandardTemplate_Opaque_Frag(FragmentInput fragInput,
-                                  inout FragmentOutput fragOutput) {
-  StandardSurfaceInput surfaceInput = StandardTemplate_DefaultInput(fragInput);
-  StandardSurfaceOutput surfaceOutput = StandardTemplate_DefaultOutput();
-  surfaceInput.UV = fragInput.texcoord0;
-  surfaceInput.Color = fragInput.color0.xyz;
-  surfaceInput.Alpha = fragInput.color0.a;
-
-#ifdef TRANSPARENT_PASS
-  RenderChunkSurfTransparent(surfaceInput, surfaceOutput);
-#elif defined(ALPHA_TEST_PASS)
-  RenderChunkSurfAlpha(surfaceInput, surfaceOutput);
-#elif defined(DEPTH_ONLY_PASS)
-  RenderChunkSurfDepthOnly(surfaceInput, surfaceOutput);
-#elif defined(DEPTH_ONLY_OPAQUE_PASS)
-  RenderChunkSurfDepthOnlyOpaque(surfaceInput, surfaceOutput);
+#if defined(TRANSPARENT_PASS)
+  color.a *= vertexColor.a;
 #elif defined(OPAQUE_PASS)
-  RenderChunkSurfOpaque(surfaceInput, surfaceOutput);
+  color.a = vertexColor.a;
 #endif
 
-  StandardTemplate_CustomSurfaceShaderEntryIdentity(
-      surfaceInput.UV, fragInput.worldPos, surfaceOutput);
-
-  RenderChunkApplyUseless(fragInput, surfaceInput, surfaceOutput, fragOutput);
-
-  DirectionalLight primaryLight;
-  vec3 worldLightDirection = LightWorldSpaceDirection.xyz;
-  primaryLight.ViewSpaceDirection = mul(View, vec4(worldLightDirection, 0)).xyz;
-  primaryLight.Intensity =
-      LightDiffuseColorAndIlluminance.rgb * LightDiffuseColorAndIlluminance.w;
-  CompositingOutput compositingOutput;
-  compositingOutput.mLitColor = computeLighting_RenderChunk(
-      fragInput, surfaceInput, surfaceOutput, primaryLight);
-  fragOutput.Color0 = standardComposite(surfaceOutput, compositingOutput);
-
-#if defined(DO_LIGHT_OVERLAY)
-  if (fragOutput.light_overlay_type == 1) {
-    fragOutput.Color0 = mix(fragOutput.Color0, vec4(0.0, 1.0, 0.0, 1.5), 0.15);
-  } else if (fragOutput.light_overlay_type == 2) {
-    fragOutput.Color0 = mix(fragOutput.Color0, vec4(1.0, 0.0, 0.0, 1.0), 0.3);
+#if defined(TRANSPARENT_PASS) || defined(OPAQUE_PASS)
+  if (ditheringAndMaskTinting.y > 0.5) {
+    color = applyMaskTinting(materialColor, vertexColor);
   }
 #endif
 
-#if defined(DO_CHUNK_BORDERS)
-  if (length(fragInput.worldPos) < 128.0) {
-    fragOutput.Color0 = chunk_border(fragOutput.Color0, fragInput.position);
-  }
+#if defined(SEASONS__ON) && (defined(ALPHA_TEST_PASS) || defined(OPAQUE_PASS))
+  color = applySeasons(materialColor, vertexColor);
 #endif
 
-#if !defined(ENABLE_NO_FOG)
-  RenderChunkApplyFog(fragInput, surfaceInput, surfaceOutput, fragOutput);
-#endif
+  return color;
 }
 
 void main() {
-  FragmentInput fragmentInput;
-  FragmentOutput fragmentOutput;
-  fragmentInput.clipPosition = v_clipPosition;
-  fragmentInput.color0 = v_color0;
-  fragmentInput.ditheringAndMaskTinting = v_ditheringAndMaskTinting;
-  fragmentInput.fog = v_fog;
-  fragmentInput.lightmapUV = v_lightmapUV;
-  fragmentInput.texcoord0 = v_texcoord0;
-  fragmentInput.worldPos = v_worldPos;
-  fragmentInput.worldPosition = v_worldPosition;
-  fragmentInput.position = v_position;
-  fragmentOutput.Color0 = vec4(0, 0, 0, 0);
-  fragmentOutput.light_overlay_type = 0;
-  ViewRect = u_viewRect;
-  Proj = u_proj;
-  View = u_view;
-  ViewTexel = u_viewTexel;
-  InvView = u_invView;
-  InvProj = u_invProj;
-  ViewProj = u_viewProj;
-  InvViewProj = u_invViewProj;
-  PrevViewProj = u_prevViewProj;
-  {
-    WorldArray[0] = u_model[0];
-    WorldArray[1] = u_model[1];
-    WorldArray[2] = u_model[2];
-    WorldArray[3] = u_model[3];
+  vec4 materialColor = texture2D(s_MatTexture, v_texcoord0);
+  bool bDither = shouldDither(v_ditheringAndMaskTinting,
+    v_clipPosition, v_worldPosition);
+  vec4 color = vec4_splat(1.0);
+
+#if defined(ALPHA_TEST_PASS) || defined(DEPTH_ONLY_PASS)
+  if (materialColor.a < 0.5 || bDither) {
+    discard;
   }
-  World = u_model[0];
-  WorldView = u_modelView;
-  WorldViewProj = u_modelViewProj;
-  PrevWorldPosOffset = u_prevWorldPosOffset;
-  AlphaRef4 = u_alphaRef4;
-  AlphaRef = u_alphaRef4.x;
-  StandardTemplate_Opaque_Frag(fragmentInput, fragmentOutput);
-  gl_FragColor = fragmentOutput.Color0;
+#endif
+
+#if defined(TRANSPARENT_PASS)
+  color = shadeMaterial(materialColor, v_color0, v_ditheringAndMaskTinting);
+  if (bDither) {
+    color.a = 0.0;
+  }
+#elif defined(OPAQUE_PASS) || defined(ALPHA_TEST_PASS)
+  color = shadeMaterial(materialColor, v_color0, v_ditheringAndMaskTinting);
+#endif
+
+  // Useless shader additions
+  float cameraDistance = length(v_worldPosition);
+  int redstone_overlay_type = 0;
+  int light_overlay_type = 0;
+
+#if defined(ENABLE_REDSTONE_OVERLAY)
+  if (cameraDistance < 32.0) {
+    redstone_overlay_type = redstone_overlay(v_origPosition, v_color0.xyz);
+    if (redstone_overlay_type == 2) {
+      color = vec4(1.0, 1.0, 1.0, 1.0);
+    }
+  }
+#endif
+#if defined(ENABLE_LIGHT_OVERLAY)
+  if (cameraDistance < 32.0 &&
+      redstone_overlay_type == 0) {
+    light_overlay_type = light_overlay(v_origPosition, v_lightmapUV);
+
+    if(light_overlay_type != 0) {
+      if (light_overlay_type == 1) {
+        color = mix(color, vec4(0.0, 1.0, 0.0, 1.5), 0.15);
+      } else {
+        color = mix(color, vec4(1.0, 0.0, 0.0, 1.0), 0.3);
+      }
+    }
+  }
+#endif
+
+#if defined(ENABLE_CHUNK_BORDERS)
+  if (cameraDistance < 128.0 &&
+      redstone_overlay_type + light_overlay_type == 0) {
+    color = chunk_border(v_origPosition, color);
+  }
+#endif
+
+  gl_FragColor = applyLightingAndFog(color, v_lightmapUV, v_fog.a);
 }

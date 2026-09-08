@@ -6,7 +6,7 @@ bool overlayTopFace(vec3 chunkPos)
 
 bool between(float value, float low, float high)
 {
-    return value >= low && value <= high;
+    return value >= low && value < high;
 }
 
 bool rect(vec2 p, float x0, float x1, float y0, float y1)
@@ -43,79 +43,55 @@ int redstonePower(vec3 color)
     return redstonePowerFromColor(color);
 }
 
-bool drawDigit(vec2 p, int value)
+bool drawDigit(vec2 p, int digit)
 {
-    if (value == 0) {
-        return rect(p, 0.25, 0.35, 0.25, 0.75) ||
-               rect(p, 0.45, 0.55, 0.25, 0.75) ||
-               rect(p, 0.35, 0.45, 0.25, 0.35) ||
-               rect(p, 0.35, 0.45, 0.65, 0.75);
+    if (!rect(p, 0.25, 0.55, 0.25, 0.75)) {
+        return false;
     }
-    if (value == 1) {
-        return rect(p, 0.25, 0.55, 0.25, 0.35) ||
-               rect(p, 0.35, 0.45, 0.35, 0.75) ||
-               rect(p, 0.45, 0.55, 0.65, 0.75);
+
+    // Represent digits as a 15-segment display.
+    ivec2 cell = ivec2(floor((p - vec2(0.25, 0.25)) * 10.0));
+    int x = cell.x;
+    int y = cell.y;
+
+    if (digit == 0) {
+        return x == 0 || x == 2 || y == 0 || y == 4;
     }
-    if (value == 2) {
-        return rect(p, 0.35, 0.45, 0.45, 0.55) ||
-               rect(p, 0.25, 0.35, 0.45, 0.75) ||
-               rect(p, 0.45, 0.55, 0.25, 0.55) ||
-               rect(p, 0.25, 0.45, 0.25, 0.35) ||
-               rect(p, 0.35, 0.55, 0.65, 0.75);
+    if (digit == 1) {
+        return y == 0 || x == 1 || (x == 2 && y == 4);
     }
-    if (value == 3) {
-        return rect(p, 0.25, 0.35, 0.25, 0.75) ||
-               rect(p, 0.35, 0.55, 0.45, 0.55) ||
-               rect(p, 0.35, 0.55, 0.25, 0.35) ||
-               rect(p, 0.35, 0.55, 0.65, 0.75);
+    if (digit == 2) {
+        return y == 0 || y == 2 || y == 4 || (x == 0 && y == 3) || (x == 2 && y == 1);
     }
-    if (value == 4) {
-        return rect(p, 0.25, 0.35, 0.25, 0.75) ||
-               rect(p, 0.45, 0.55, 0.45, 0.75) ||
-               rect(p, 0.35, 0.45, 0.45, 0.55);
+    if (digit == 3) {
+        return x == 0 || y == 0 || y == 2 || y == 4;
     }
-    if (value == 5) {
-        return rect(p, 0.35, 0.45, 0.45, 0.55) ||
-               rect(p, 0.25, 0.35, 0.25, 0.55) ||
-               rect(p, 0.45, 0.55, 0.45, 0.75) ||
-               rect(p, 0.25, 0.45, 0.65, 0.75) ||
-               rect(p, 0.35, 0.55, 0.25, 0.35);
+    if (digit == 4) {
+        return x == 0 || y == 2 || (x == 2 && y >= 2);
     }
-    if (value == 6) {
-        return rect(p, 0.35, 0.45, 0.45, 0.55) ||
-               rect(p, 0.25, 0.35, 0.25, 0.55) ||
-               rect(p, 0.45, 0.55, 0.25, 0.75) ||
-               rect(p, 0.25, 0.45, 0.65, 0.75) ||
-               rect(p, 0.35, 0.55, 0.25, 0.35);
+    if (digit == 5) {
+        return y == 0 || y == 2 || y == 4 || (x == 0 && y == 1) || (x == 2 && y == 3);
     }
-    if (value == 7) {
-        return rect(p, 0.25, 0.35, 0.25, 0.75) ||
-               rect(p, 0.35, 0.55, 0.65, 0.75) ||
-               rect(p, 0.45, 0.55, 0.55, 0.65);
+    if (digit == 6) {
+        return y == 0 || y == 2 || y == 4 || x == 2 || (x == 0 && y == 1);
     }
-    if (value == 8) {
-        return rect(p, 0.35, 0.45, 0.45, 0.55) ||
-               rect(p, 0.25, 0.35, 0.25, 0.75) ||
-               rect(p, 0.45, 0.55, 0.25, 0.75) ||
-               rect(p, 0.35, 0.45, 0.25, 0.35) ||
-               rect(p, 0.35, 0.45, 0.65, 0.75);
+    if (digit == 7) {
+        return x == 0 || y == 4 || (x == 2 && y == 3);
     }
-    if (value == 9) {
-        return rect(p, 0.35, 0.45, 0.45, 0.55) ||
-               rect(p, 0.25, 0.35, 0.35, 0.75) ||
-               rect(p, 0.45, 0.55, 0.45, 0.75) ||
-               rect(p, 0.25, 0.55, 0.25, 0.35) ||
-               rect(p, 0.35, 0.55, 0.65, 0.75);
+    if (digit == 8) {
+        return x == 0 || x == 2 || y == 0 || y == 2 || y == 4;
+    }
+    if (digit == 9) {
+        return y == 0 || y == 2 || y == 4 || x == 0 || (x == 2 && y == 3);
     }
 
     return false;
 }
 
-
-bool drawDigitAt(vec2 p, int value, float xOffset)
+bool drawDigitAt(vec2 p, int digit, float xOffset)
 {
     p.x -= xOffset;
-    return drawDigit(p, value);
+    return drawDigit(p, digit);
 }
 
 bool drawValue(vec2 p, int value)
@@ -124,7 +100,6 @@ bool drawValue(vec2 p, int value)
         return drawDigitAt(p, value, 0.0);
     }
 
-    //return drawDigitAt(p, 1, 0.0) || drawDigitAt(p, value - 10, 0.30);
     return drawDigitAt(p, 1, 0.15) || drawDigitAt(p, value - 10, -0.15);
 }
 
@@ -158,7 +133,6 @@ int redstone_overlay(vec3 chunkPos, vec3 color)
 
 int lightOverlayDigit(vec2 p, float lightLevel, int highValueMax)
 {
-    //int value = int(floor((lightLevel + 0.006666667) * 15.0));
     // https://www.lomont.org/posts/2023/accuratecolorconversions/
     int value = int(floor(lightLevel * 16.0));
     value = clamp(value, 0, 15);
